@@ -1,0 +1,44 @@
+---
+
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"      
+
+  - name: Delete hosts
+    file: 
+      path: hosts
+      state: absent
+  
+  - name: Create hosts
+    file:
+      path: hosts
+      state: touch  
+      mode: '0744'
+
+  - name: Add entries to the hosts
+    lineinfile:
+      path: hosts
+      line: |
+        [{{ hypervisor.name }}]
+        {{ hypervisor.ip }}
+
+    
+  - name: Add nodes to the inventory file part 1
+    lineinfile:
+      path: hosts
+      line: '[nodes]'
+
+  - name: Add nodes to the inventory file part 2
+    lineinfile:
+      path: hosts
+      line: "{{ item.oam_ip }}"
+    with_items:
+      "{{ nodes }}"
+          
+  - name: Refresh inventory 
+    meta: refresh_inventory
+
+  
+
+
+
+

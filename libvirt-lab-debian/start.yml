@@ -1,0 +1,6 @@
+
+
+- hosts: hypervisor
+  user: root
+  roles:     
+    - role: 06_start_vms

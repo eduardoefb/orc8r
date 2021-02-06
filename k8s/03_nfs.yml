@@ -1,0 +1,10 @@
+# Create everything
+  
+
+- hosts: NFS
+  user: debian
+  become: true
+  roles:     
+    - role: 04_nfs      
+
+

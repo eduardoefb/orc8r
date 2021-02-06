@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:  
+  labels:
+    app: nginx-proxy
+    chart: nginx-proxy-2.3.2
+    heritage: Tiller
+    release: nginx-proxy
+  name: nginx-proxy-etc
+  namespace: default
+  resourceVersion: "2575"
+  selfLink: /api/v1/namespaces/orc8r/configmaps/nginx-proxy-etc
+  
+data:
+data:
+  nginx_proxy_ssl.conf: |
+    server {
+      listen 443;
+      ssl on;
+      ssl_certificate /etc/nginx/conf.d/nms_nginx.pem;
+      ssl_certificate_key /etc/nginx/conf.d/nms_nginx.key.pem;
+      location / {
+         proxy_pass http://magmalte:8081;
+         proxy_set_header Host $http_host;
+      }
+    }
+

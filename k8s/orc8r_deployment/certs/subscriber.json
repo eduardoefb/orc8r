@@ -1,0 +1,13 @@
+  {
+    "active_apns": [
+      "orc8r.int"
+    ],
+    "id": "IMSI724310000000004",
+    "lte": {
+      "auth_algo": "MILENAGE",
+      "auth_key": "AAAAAAAAAAAAAAAAAAAABA==",
+      "auth_opc": "AAAAAAAAAAAAAAAAAAAABA==",
+      "state": "ACTIVE",
+      "sub_profile": "default"
+    }
+  }

@@ -1,0 +1,15 @@
+{
+  "apn_configuration": {
+    "ambr": {
+      "max_bandwidth_dl": 20000000,
+      "max_bandwidth_ul": 10000000
+    },
+    "qos_profile": {
+      "class_id": 9,
+      "preemption_capability": true,
+      "preemption_vulnerability": false,
+      "priority_level": 15
+    }
+  },
+  "apn_name": "orc8r.int"
+}

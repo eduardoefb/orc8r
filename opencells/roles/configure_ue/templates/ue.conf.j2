@@ -1,0 +1,50 @@
+# List of known PLMNS
+PLMN: {
+
+{% for p in ue.plmn_list %}
+    PLMN{{ p.id }}: {
+           FULLNAME="{{ p.full_name }}";
+           SHORTNAME="{{ p.short_name }}";
+           MNC="{{ p.mnc }}";
+           MCC="{{ p.mcc }}";
+
+    };
+{% endfor %}
+};
+
+UE0:
+{
+    USER: {
+        IMEI="{{ ue.user.imei }}";
+        MANUFACTURER="{{ ue.user.manufacturer }}";
+        MODEL="{{ ue.user.model }}";
+        PIN="{{ ue.user.pin }}";
+    };
+
+    SIM: {
+        MSIN="{{ ue.sim.msin }}";
+        USIM_API_K="{{ ue.sim.key }}";
+        OPC=       "{{ ue.sim.opc }}";
+        MSISDN="{{ ue.sim.msisdn }}";
+    };
+
+    # Home PLMN Selector with Access Technology
+    HPLMN= "{{ ue.hplmn }}";
+
+    # User controlled PLMN Selector with Access Technology
+    UCPLMN_LIST = ();
+
+    # Operator PLMN List
+    OPLMN_LIST = ("{{ ue.hplmn }}");
+
+    # Operator controlled PLMN Selector with Access Technology
+    OCPLMN_LIST = ("{{ ue.hplmn }}");
+
+    # Forbidden plmns
+    FPLMN_LIST = ();
+
+    # List of Equivalent HPLMNs
+#TODO: UE does not connect if set, to be fixed in the UE
+#    EHPLMN_LIST= ("20811", "20813");
+    EHPLMN_LIST= ();
+};

@@ -1,0 +1,13 @@
+
+
+- hosts: enodeb 
+  user: cloud
+  become: true
+  roles:     
+    - role: configure_enodeb
+
+- hosts: ue 
+  user: cloud
+  become: true
+  roles:     
+    - role: configure_ue  

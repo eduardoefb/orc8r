@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: user-grafana
+  labels:
+    type: local
+spec:  
+  capacity:
+    storage: 100Mi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: user-grafana
+    namespace: default    
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/media/node01/user-grafana"

@@ -1,0 +1,12 @@
+# Define enviroment
+- hosts: localhost
+  roles:     
+    - role: 01_define_enviroment  
+
+
+# Clear everything
+- hosts: hypervisor
+  user: cloud
+  become: true
+  roles:     
+    - role: 02_remove_all

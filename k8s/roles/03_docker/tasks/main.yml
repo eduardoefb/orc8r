@@ -1,0 +1,74 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Clear 
+    shell: |
+      apt-get remove docker docker-engine docker.io containerd runc -y
+    ignore_errors: yes
+    args:
+      warn: no
+      executable: /bin/bash
+
+  - name: Install required packages
+    apt:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+        - apt-transport-https
+        - ca-certificates
+        - curl 
+        - software-properties-common
+        - nfs-kernel-server
+        - gnupg-agent
+
+  - name: Add repo
+    shell: |
+      curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+      apt-key fingerprint 0EBFCD88
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+      apt-get update
+      apt-get install docker-ce docker-ce-cli containerd.io -y   
+    args:
+      warn: no 
+      executable: /bin/bash 
+
+
+
+  - name: Disable swap
+    shell: |
+      swapoff -a
+      sed -i '/swap    sw/d' /etc/fstab
+    args:
+      executable: /bin/bash
+      warn: no
+
+  - name: Create k8s install script
+    template:
+      src: k8s_install.sh.j2
+      dest: /tmp/k8s_install.sh
+      mode: '744'
+      owner: root
+      group: root
+  
+  - name: Exec k8s install script
+    shell: |
+      bash /tmp/k8s_install.sh
+    args:
+      warn: no
+      executable: /bin/bash
+
+  - name: Add register as allwed list
+    shell: |
+      cat << EOF > /etc/docker/daemon.json 
+      { "insecure-registries":["{{ registery_url }}"] }
+      EOF
+      systemctl restart docker
+    args:
+      warn: no
+      executable: /bin/bash
+  
+
+
+    

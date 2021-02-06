@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx-proxy
+  name: nginx-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: nginx-proxy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: nginx-proxy
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: ""
+        name: nginx-proxy
+        ports:
+        - containerPort: 443
+        resources: {}
+        volumeMounts:        
+        - mountPath: /etc/nginx/conf.d/nginx_proxy_ssl.conf
+          name: nginx-proxy-etc
+          subPath: nginx_proxy_ssl.conf
+        - mountPath: /etc/nginx/conf.d/nms_nginx.pem
+          name: orc8r-secrets-certs
+          readOnly: true
+          subPath: controller.crt
+        - mountPath: /etc/nginx/conf.d/nms_nginx.key.pem
+          name: orc8r-secrets-certs
+          readOnly: true
+          subPath: controller.key
+
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - configMap:
+          defaultMode: 365
+          name: nginx-proxy-etc
+        name: nginx-proxy-etc
+      - name: orc8r-secrets-certs
+        secret:
+          defaultMode: 292
+          secretName: nms-certs
+status: {}

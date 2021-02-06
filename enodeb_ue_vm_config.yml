@@ -1,0 +1,135 @@
+---
+
+  pw_hash: $6$SEaggDjiCCX4Togw$Ywp6LEk0MCA1Axl7xQj78CXCOH2JDn1YAahqqZ4DH21GMZueTqT5LisIaCzES.0UjZfUFg/qngHgtum2INXNH1
+  # To generate a password hash:
+  # python3 -c 'import crypt; import os; print(crypt.crypt("password123", crypt.mksalt(crypt.METHOD_SHA512)))'
+
+  authorized_keys: 
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4tzrayU6ahMhmWuicy+oFfy//9oB+2EdbbmDfA0d+k3SpYjWVqho64/L+sQIAN0RGBJx42GkbKi8B6AriPw8omLOCk2WSYW3ymEC7n3l32M5T4cLr8LIYwoMOBZkMtRc3H62PrHgDoTJLhUOvT2ewj1SLl7iU5gQuInwPE6jWooIb8R6KMUl31qNpkafCVPz5ovw0iYbDamHQF6sq081Xl39px2345T8TofIAocyBUfCOstmAvPaD9lXIV3j9JmPhAy0oweXpxdPiQzBHXepLh/jrvHrV5ggl2iwmLgF3uzwYdFlQN6eCniBtBEcGqEacb6oP2KHfHer04WIbAMHZ eduardoefb@efb
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDEogQQvxuvrZQZY7mNRxWTQ2KM+BzggtaGbckhevJiOXHbN1TyJZNFXMHz3ZH2g913uXCD31hikSwhWQdGPDCIy8KRPdaDsa9zVhZJ5e/WQ9/g2OYaZDlL1ESQtJvCCubo7XDxHkOPxrjaIJrt8sAJRCBO3GIoY+Ush+tqG7KnGuj3Z9MkunaRmNKmaOrRQtxAhGW0na6mRltdpkdVvSrER1MIh4dipr6CAm79xcdqzq64qkYLPq31AQs8A4B8rIPcZipaxBFi5KARC9PvEJ4pkAvaGFnPmFY1v1FUGSsuF0hRZiqa/gUU1QGKvT2UlA1dvbU6gY2rohilMiDtQOaD eduardoefb@efb
+  
+  timezone: Brazil/East
+  hypervisor:
+    name: hypervisor
+    ip: 10.2.1.31
+    workdir: /srv/opencells    
+
+  network:
+    domain: orc8r.int
+    ntp_servers:      
+      - 0.centos.pool.ntp.org
+      - 1.centos.pool.ntp.org
+      - 2.centos.pool.ntp.org
+      - 3.centos.pool.ntp.org
+      
+    oam:
+      name: enodeb_oam
+      external_vlan: 2001
+      external_interface: eth0
+      network: 10.10.1.0
+      broadcast: 10.10.1.255
+      gateway: 10.10.1.1
+      netmask: 255.255.255.0
+      netmask_len: 24
+      dns: 8.8.8.8
+      dev: "vnet0"
+      alias: "net0"
+      slot: "0x10"
+      type: "rtl8139"
+      mtu: 1500
+ 
+    external: 
+      - name: agw_s1
+        external_vlan: 2000
+        external_interface: eth0
+        network: 10.10.0.0        
+        broadcast: 10.10.0.255       
+        netmask: 255.255.255.0
+        netmask_len: 24
+        dev: "vnet1"
+        alias: "net1"
+        slot: "0x11" 
+        type: "rtl8139"   
+        mtu: 1500
+
+  disk_image: "/srv/image/ubuntu.img"
+
+  common:
+    os_disk_size: "40G"
+    
+  nodes:  
+    - name: enodeb01
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "enodeb01_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.10.1.20" 
+      oam_mac: "74:86:a1:c5:f9:a8"
+      external_ips: 
+        - "10.10.0.20"                      
+      vnc: 
+        port: 26111
+
+
+    - name: ue01
+      hypervisor: "{{ hypervisor }}"
+      ram: 4095000
+      cpus: 4      
+      disk: 
+        - name: "ue01_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.10.1.21"  
+      oam_mac: "74:86:a1:c5:f9:ab"          
+      external_ips: []
+        
+      
+      vnc: 
+        port: 26121   
+
+
+  enodeb:
+    mme_ip_address: 10.10.0.10
+    s1_interface: "eth1"
+    s1_u_interface: "eth1"
+    s1_ip: "10.10.0.20"
+    s1_u_ip: "10.10.0.20"
+    plmn_list:
+      - mcc: 724
+        mnc: 31
+        mnc_length: 2
+    
+    tracking_area_code: 100
+
+  ue:    
+    plmn_list:
+      - id: 0
+        full_name: "Oi"
+        short_name: "Oi"
+        mcc: 724
+        mnc: 31
+    user:
+      imei: "356113022094150"
+      manufacturer: "EURECOM"
+      model: "LTE Android PC"
+      pin: "0000"
+
+    sim:
+      msin: "0000000001"
+      key: "00000000000000000000000000000001"
+      opc: "00000000000000000000000000000001"
+      msisdn: "5521989240013"
+    
+    hplmn: "72431"
+
+
+
+    
+

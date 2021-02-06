@@ -1,0 +1,5 @@
+- hosts: MASTER
+  user: cloud
+  become: true
+  roles:     
+    - role: 04_nfs      

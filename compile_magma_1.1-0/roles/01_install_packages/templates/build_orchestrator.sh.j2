@@ -1,0 +1,13 @@
+#!/bin/bash
+source /root/.bashrc
+cd /root/
+tar -xvf v1.1.0.tar.gz
+mv magma-1.1.0 magma
+cd /root/magma/orc8r/cloud/docker
+./build.py -a
+cd ~/magma/orc8r/cloud/docker && ./run.sh -all
+cd /root/magma/symphony/app/fbcnms-projects/magmalte
+docker-compose build magmalte
+cd ~/magma/symphony/
+ln -s ../.cache .
+cd ~/magma/symphony/app/fbcnms-projects/magmalte && docker-compose up -d

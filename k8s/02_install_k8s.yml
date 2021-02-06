@@ -1,0 +1,139 @@
+# Create everything
+  
+
+- hosts: MASTER1, WORKER
+  user: debian
+  become: true 
+  roles:
+    - role: 03_crio
+
+# Configure kubernetes cluster
+- hosts: MASTER1, WORKER
+  user: debian
+  become: true
+  tasks:
+    - name: Remove kubernetes configuration
+      shell:
+        kubeadm reset -f
+
+  
+- hosts: MASTER1
+  user: debian
+  become: true
+  tasks:
+    - include_vars: "{{ playbook_dir }}/config.yml" 
+  
+    - name: Create cluster
+      shell: kubeadm init  --cri-socket=/var/run/crio/crio.sock  --control-plane-endpoint "{{ nodes[0].oam_ip }}:6443" --upload-certs > /tmp/kube_init.log
+        
+    - name: Configure kubeconfig part 1
+      file:
+        path: /root/.kube
+        state: absent
+
+    - name: Configure kubeconfig part 2
+      file:
+        path: /root/.kube
+        state: directory
+        mode: '700'
+    
+    - name: Configure kubeconfig part 3
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Get kube config
+      fetch:
+        src: /root/.kube/config
+        dest: kubeconfig
+        flat: yes
+    
+    - name: Retrive configuration for other masters
+      shell: grep -A2 --color "kubeadm join" /tmp/kube_init.log | while read l; do echo $l; done | head -1
+      register: master_join_cmd
+
+    - name: Retrive configuration for other workers
+      shell: grep -A2 --color "kubeadm join" /tmp/kube_init.log | while read l; do echo $l; done | tail -1
+      register: worker_join_cmd
+
+    - name: Export master_join_cmd
+      add_host:
+        name: "master_join_cmd"
+        value: "{{ master_join_cmd.stdout}}"    
+
+    - name: Export worker_join_cmd
+      add_host:
+        name: "worker_join_cmd"
+        value: "{{ worker_join_cmd.stdout}}"   
+
+
+
+- 
+  hosts: WORKER
+  user: debian
+  become: true
+  tasks: 
+    - name: Configure worker nodes
+      shell: "{{ hostvars['worker_join_cmd']['value'] }}"
+
+   
+- hosts: MASTER1
+  user: debian
+  become: true
+  tasks:
+
+    - name: Install the Weave Net addon
+      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" 
+
+    - name: Pause 1 min
+      pause:
+        minutes: 1      
+     
+    - name: Configure metallb
+      shell: |
+        kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+        kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+        kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+
+    - name: Pause 20 seconds
+      pause:
+        seconds: 20
+
+    - name: Remove template file
+      file: 
+        path: /tmp/metallb.yml
+        state: absent 
+
+    - name: Define template for external ips
+      lineinfile: 
+        line: |
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            namespace: metallb-system
+            name: config
+          data:
+            config: |
+              address-pools:
+              - name: default
+                protocol: layer2
+                addresses:
+                - {{ k8s.metallb_ip_range }} 
+        path: /tmp/metallb.yml
+        create: yes
+
+    - name: Apply metalb config
+      shell: kubectl apply -f  /tmp/metallb.yml
+
+
+- hosts: MASTER1
+  user: debian
+  become: true
+  roles:     
+    - role: 04_nfs      
+
+

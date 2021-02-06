@@ -1,0 +1,168 @@
+
+   
+- name: Disable IPV6  
+  shell:     
+     echo "net.bridge.bridge-nf-call-ip6tables = 1 \nnet.bridge.bridge-nf-call-iptables = 1" > /etc/sysctl.d/k8s.conf &&  sysctl --system
+     
+- name: Install packages 
+  apt:  
+     pkg: [ 'curl', 'wget', 'openstack-clients', 'make', 'build-essential', 'libssl-dev', 'zlib1g-dev', 'libbz2-dev', 'libreadline-dev', 'libsqlite3-dev', 'llvm', 'libncurses5-dev', 'libncursesw5-dev', 'xz-utils', 'tk-dev', 'libffi-dev', 'liblzma-dev', 'git', 'python3', 'python3-pip' ]
+
+- name: Install helm
+  shell: |
+    curl -k https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz > /root/helm-v3.2.1-linux-amd64.tar.gz;
+    cd /root/;
+    tar -xvf helm-v3.2.1-linux-amd64.tar.gz;
+    chmod +x linux-amd64/helm;
+    mv linux-amd64/helm /usr/local/bin;
+  args:
+    warn: no
+    executable: /bin/bash
+
+- name: Install kompose
+  shell:
+    curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o /usr/local/bin/kompose;
+    chmod +x /usr/local/bin/kompose
+  args:
+    warn: no
+
+- name: Remove pyenv directory
+  file:
+    path: /root/.pyenv
+    state: absent
+
+- name: Clone pyenv  
+  git:
+    repo: https://github.com/pyenv/pyenv.git
+    dest: /root/.pyenv
+
+- name: Pyenv script
+  template:
+    src: pyenv.sh.j2
+    dest: /tmp/pyenv.sh
+    mode: "744"
+
+- name: Install pyenv
+  shell: |
+    bash /tmp/pyenv.sh
+  args:
+    warn: no
+    executable: /bin/bash
+
+- name: AWS Authenticator
+  shell: |
+    curl -k -o /usr/local/bin/aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/aws-iam-authenticator
+    chmod +x /usr/local/bin/aws-iam-authenticator
+  args:
+    warn: no
+    executable: /bin/bash
+
+
+- name: Install kubectl
+  shell: |
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/kubectl
+  args:
+    warn: no
+    executable: /bin/bash
+
+
+- name: Install terraform
+  shell: |
+    curl -LO https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip;
+    unzip terraform_0.12.24_linux_amd64.zip;
+    chmod +x terraform;
+    mv terraform /usr/local/bin/;
+    rm -f terraform_0.12.24_linux_amd64.zip
+  args:
+    warn: no
+    executable: /bin/bash
+
+- name: Install kops
+  shell: |
+    curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64;
+    chmod +x kops-linux-amd64;
+    mv kops-linux-amd64 /usr/local/bin/kops
+  args:
+    warn: no
+    executable: /bin/bash
+
+- name: Install docker, install dependences
+  apt:  
+     pkg: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg-agent', 'software-properties-common', 'nfs-kernel-server', 'portmap']
+
+- name: Install docker, get repository
+  shell: |
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+    apt-key fingerprint 0EBFCD88
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    apt update
+  args:
+    warn: no
+    executable: /bin/bash
+  
+- name: Install docker, install  
+  apt:
+     pkg: ['docker-ce', 'docker-ce-cli', 'containerd.io', 'apt-transport-https', 'gnupg2']
+     
+- name: Enable docker
+  systemd:     
+     enabled: yes
+     name: docker
+
+- name: Restart docker  
+  systemd:     
+     state: restarted
+     daemon_reload: yes
+     name: docker    
+
+- name: Install docker compose
+  shell: |
+    curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+  args:
+    warn: no
+    executable: /bin/bash
+
+- name: Remove magma file and directory (if exist)
+  file:
+    path: /root/magma
+    state: absent
+
+- name: Remove magma file and directory (if exist)
+  file:
+    path: /root/v1.1.0.tar.gz
+    state: absent
+
+- name: Remove magma file and directory (if exist)
+  file:
+    path: magma-1.1.0 magma
+    state: absent
+
+- name: Download magma
+  get_url:
+    url: https://github.com/facebookincubator/magma/archive/v1.1.0.tar.gz
+    dest: /root/v1.1.0.tar.gz
+    mode: '700'
+
+- name: Build orchestrator script
+  template:
+    src: build_orchestrator.sh.j2
+    dest: /tmp/build.sh
+    mode: '755'
+
+- name: Exec orchestration script
+  shell: |
+    bash /tmp/build.sh > /tmp/build.log
+
+  args:
+    warn: no
+    executable: /bin/bash
+    
+    
+    
+    
+
+
+

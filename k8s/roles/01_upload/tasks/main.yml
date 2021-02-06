@@ -1,0 +1,17 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "main.yml"
+   
+- name: Upload images
+  template:
+    src: upload.sh.j2
+    dest: /tmp/upload.sh
+    mode: '744'
+    owner: root
+    group: root
+
+- name: Upload images 2
+  shell: |
+    bash -x /tmp/upload.sh
+  args:
+    executable: /bin/bash

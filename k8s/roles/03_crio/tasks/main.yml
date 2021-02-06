@@ -1,0 +1,121 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Install required packages
+    apt:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+        - apt-transport-https
+        - ca-certificates
+        - curl 
+        - software-properties-common
+        - nfs-kernel-server
+
+  
+  - name: Remove repo file if exists
+    file:
+      path: "/etc/apt/sources.list.d/stretch-backports.list"
+      state: absent 
+
+  - name: Remove repo file if exists
+    file:
+      path: "/etc/apt/sources.list.d/buster-backports.list"
+      state: absent       
+
+  - name: Add crm repo
+    template:
+      src: backports.list.j2
+      dest: /etc/apt/sources.list.d/buster-backports.list
+      owner: root
+      group: root
+
+  - name: Update cache
+    apt:
+      update_cache: yes        
+
+  - name: Exec workaround for runc lib version
+    shell: |
+      apt-get -t buster-backports install libseccomp-dev -y
+    args:
+      executable: /bin/bash
+      warn: no
+    
+  - name: Create crio install script
+    template: 
+      src: crio_install.sh.j2
+      dest: /tmp/install_crio.sh
+      mode: '744'
+      owner: root
+      group: root
+  
+  - name: Exec crio install script
+    shell: |
+      bash /tmp/install_crio.sh
+    args:
+      executable: /bin/bash
+
+  - name: Configure cgroup driver
+    template:
+      src: crio.conf.j2
+      dest: /etc/crio/crio.conf
+      owner: root
+      group: root
+      mode: "644"
+
+  - name: Configure cgroup driver
+    template:
+      src: 02-cgroup-manager.conf.j2
+      dest: /etc/crio/crio.conf.d/02-cgroup-manager.conf
+      owner: root
+      group: root
+      mode: "644"
+
+  - name: Install cri-tools
+    apt:
+      name: cri-tools
+      state: latest
+
+  - name: Restart crio services
+    systemd:
+      name: "{{ item }}"
+      enabled: yes
+      state: restarted
+    with_items:
+      - crio
+
+  - name: Disable swap
+    shell: |
+      swapoff -a
+      sed -i '/swap    sw/d' /etc/fstab
+    args:
+      executable: /bin/bash
+      warn: no
+
+  - name: Create k8s install script
+    template:
+      src: k8s_install.sh.j2
+      dest: /tmp/k8s_install.sh
+      mode: '744'
+      owner: root
+      group: root
+  
+  - name: Exec k8s install script
+    shell: |
+      bash /tmp/k8s_install.sh
+    args:
+      warn: no
+      executable: /bin/bash
+
+  - name: Restart crio services
+    systemd:
+      name: "{{ item }}"
+      enabled: yes
+      state: restarted
+    with_items:
+      - crio      
+
+
+    

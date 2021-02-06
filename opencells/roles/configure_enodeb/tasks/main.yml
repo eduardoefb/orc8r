@@ -1,0 +1,12 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Configure enodeb
+    template: 
+      src: enodeb.conf.j2
+      dest: /root/opencells-mods/enb.sample
+      owner: root 
+      group: root 
+      mode: '744'
+      

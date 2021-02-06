@@ -1,0 +1,48 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Install required packages
+    apt:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+        - nfs-kernel-server 
+        - rsync
+
+  - name: Enable nfs
+    systemd:
+      name: nfs-server
+      enabled: yes
+      state: started
+  
+  - name: Clear exports
+    file:
+      path: /etc/exports
+      state: absent
+
+  - name: Delete nfs directory
+    file:
+      path: "{{ nfs.path }}"
+      state: absent
+
+  - name: Create nfs directory
+    file:
+      path: "{{ nfs.path }}"
+      state: directory
+      mode: '0755'
+
+  - name: Allow worker nodes 
+    lineinfile:
+      path: /etc/exports
+      create: yes
+      line: "{{ nfs.path }} {{ item }}(rw,no_root_squash,subtree_check)"
+        
+    with_items:
+      "{{nfs.allowed_networks}}"
+  
+  - name: Exportfs
+    command: exportfs -a
+
+  

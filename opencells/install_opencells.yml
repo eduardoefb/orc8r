@@ -1,0 +1,7 @@
+
+
+- hosts: nodes 
+  user: cloud
+  become: true
+  roles:     
+    - role: install_opencells

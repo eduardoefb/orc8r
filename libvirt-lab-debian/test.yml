@@ -1,0 +1,8 @@
+
+
+# Clear everything
+- hosts: hypervisor
+  user: root
+  roles:     
+    - role: teste
+

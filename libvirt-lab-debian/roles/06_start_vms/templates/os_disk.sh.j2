@@ -1,0 +1,79 @@
+export WORK_DIR={{ hypervisor.workdir }}
+export DISK_SIZE={{ common.os_disk_size }}
+export IMAGE_URL="{{ iso_image.url }}"
+export IMAGE_FILE="/tmp/{{ iso_image.filename}}"
+export DISK_IMAGE_NAME="{{ hypervisor.workdir }}/ubuntu.img"
+
+# Customize image installation:
+cd ${WORK_DIR}
+\rm -f {{ node.disk[0].name }} 2>/dev/null
+cp ${DISK_IMAGE_NAME} {{ node.disk[0].name }}
+losetup /dev/loop0 {{ node.disk[0].name }}
+kpartx -a /dev/loop0
+vgscan
+vgchange -ay ubuntu-vg
+mount /dev/mapper/ubuntu--vg-ubuntu--lv /mnt/
+
+# Define network:
+\rm -f /mnt/etc/netplan/00-installer-config.yaml 
+cat << EOF > /mnt/etc/netplan/01-network-manager-all.yaml
+network:
+  ethernets:
+    eth0:
+      addresses: 
+        - {{ node.oam_ip }}/{{ network.oam.netmask_len }}
+      gateway4: {{ network.oam.gateway }}
+      nameservers:
+        addresses: 
+         - {{ network.oam.dns }}
+{% for n in node.external_ips %}
+    eth{{ loop.index }}:
+      addresses: 
+        - {{ n }}/{{ network.external[loop.index - 1].netmask_len }}
+{% endfor %}         
+  version: 2
+EOF
+
+cat /mnt/etc/netplan/01-network-manager-all.yaml > /mnt/etc/netplan/00-installer-config.yaml 
+
+cat << EOF > /mnt/etc/hosts
+127.0.0.1 localhost
+127.0.1.1 server01.domain
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
+
+cat << EOF > /mnt/etc/hostname
+{{ node.name }}.{{ network.domain }}
+EOF
+
+
+# Umount
+umount /mnt
+
+# Delete partitions
+ftmp=`mktemp`
+vgdisplay > ${ftmp}
+vgname="null"
+vguuid="null"
+while read l; do
+   if [[ "$l" == *"VG Name"* ]]; then
+      vgname=`echo ${l} | awk '{print $NF}'`
+   elif [[ "$l" == *"VG UUID"* ]]; then   
+      vguuid=`echo ${l} | awk '{print $NF}'`
+      if [ "${vgname}" == "ubuntu-vg" ]; then
+         echo "$vgname $vguuid"
+         vgchange -an --select vg_uuid=${vguuid}
+      fi   
+   fi
+done < ${ftmp}
+rm -f ${ftmp}
+
+
+kpartx -d /dev/loop0
+losetup -d /dev/loop0

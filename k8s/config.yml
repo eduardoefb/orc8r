@@ -1,0 +1,179 @@
+---
+
+  pw_hash: $6$SEaggDjiCCX4Togw$Ywp6LEk0MCA1Axl7xQj78CXCOH2JDn1YAahqqZ4DH21GMZueTqT5LisIaCzES.0UjZfUFg/qngHgtum2INXNH1
+  # To generate a password hash:
+  # python3 -c 'import crypt; import os; print(crypt.crypt("password123", crypt.mksalt(crypt.METHOD_SHA512)))'
+
+  authorized_keys: 
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4tzrayU6ahMhmWuicy+oFfy//9oB+2EdbbmDfA0d+k3SpYjWVqho64/L+sQIAN0RGBJx42GkbKi8B6AriPw8omLOCk2WSYW3ymEC7n3l32M5T4cLr8LIYwoMOBZkMtRc3H62PrHgDoTJLhUOvT2ewj1SLl7iU5gQuInwPE6jWooIb8R6KMUl31qNpkafCVPz5ovw0iYbDamHQF6sq081Xl39px2345T8TofIAocyBUfCOstmAvPaD9lXIV3j9JmPhAy0oweXpxdPiQzBHXepLh/jrvHrV5ggl2iwmLgF3uzwYdFlQN6eCniBtBEcGqEacb6oP2KHfHer04WIbAMHZ eduardoefb@efb
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDEogQQvxuvrZQZY7mNRxWTQ2KM+BzggtaGbckhevJiOXHbN1TyJZNFXMHz3ZH2g913uXCD31hikSwhWQdGPDCIy8KRPdaDsa9zVhZJ5e/WQ9/g2OYaZDlL1ESQtJvCCubo7XDxHkOPxrjaIJrt8sAJRCBO3GIoY+Ush+tqG7KnGuj3Z9MkunaRmNKmaOrRQtxAhGW0na6mRltdpkdVvSrER1MIh4dipr6CAm79xcdqzq64qkYLPq31AQs8A4B8rIPcZipaxBFi5KARC9PvEJ4pkAvaGFnPmFY1v1FUGSsuF0hRZiqa/gUU1QGKvT2UlA1dvbU6gY2rohilMiDtQOaD eduardoefb@efb
+  
+  timezone: Brazil/East
+  hypervisor:
+    name: hypervisor
+    ip: 10.2.1.31
+    workdir: /srv/magma    
+
+  nfs:
+    path: /srv/k8s_volume        
+    allowed_networks:
+      - 10.5.0.0/24
+      - 10.2.1.32/32
+
+  registery_url: "10.5.0.32:5000"
+    
+  k8s:
+    vip_ip: 10.5.0.15
+    ifname: "eth0"
+    name: "k8s"
+    metallb_ip_range: "10.5.0.129-10.5.0.254"
+  
+  network:
+    domain: orc8r.int
+    ntp_servers:      
+      - 0.centos.pool.ntp.org
+      - 1.centos.pool.ntp.org
+      - 2.centos.pool.ntp.org
+      - 3.centos.pool.ntp.org
+      
+    oam:
+      name: k8s_oam
+      external_vlan: 13
+      external_interface: eth0
+      network: 10.5.0.0
+      broadcast: 10.5.0.255
+      gateway: 10.5.0.1
+      netmask: 255.255.255.0
+      netmask_len: 24
+      dns: 8.8.8.8
+      dev: "vnet0"
+      alias: "net0"
+      slot: "0x10"
+      type: "rtl8139"
+      mtu: 1500
+ 
+    external: 
+      - name: agw_s1
+        external_vlan: 2000
+        external_interface: eth0
+        network: 10.10.0.0        
+        broadcast: 10.10.0.255       
+        netmask: 255.255.255.0
+        netmask_len: 24
+        dev: "vnet1"
+        alias: "net1"
+        slot: "0x11" 
+        type: "rtl8139"   
+        mtu: 1500
+    
+  disk_image: "/srv/image/debian.img"
+
+  common:
+    os_disk_size: "40G"
+    
+  nodes:  
+    - name: master01
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "master01_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.11" 
+      oam_mac: "74:86:91:c5:f9:a8"
+      external_ips: []                        
+      vnc: 
+        port: 26011
+
+
+    - name: worker01
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "worker01_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.21"  
+      oam_mac: "74:86:91:c5:f9:ab"          
+      external_ips: []
+        
+      
+      vnc: 
+        port: 26021   
+
+    - name: worker02
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "worker02_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.22"   
+      oam_mac: "74:86:91:c5:f9:ac"                   
+      external_ips: []
+        
+      
+      vnc: 
+        port: 26022  
+
+    - name: worker03
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "worker03_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.23"  
+      oam_mac: "74:86:91:c5:f9:ad"                             
+      external_ips: []
+      
+      vnc: 
+        port: 26023                   
+
+
+    - name: agw01
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "agw01_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.31"   
+      oam_mac: "74:86:91:c5:f9:ae"                                      
+      external_ips: 
+        - "10.10.0.10"
+      vnc: 
+        port: 26024         
+
+
+    - name: nfsreg01
+      hypervisor: "{{ hypervisor }}"
+      ram: 16096000
+      cpus: 8      
+      disk: 
+        - name: "compiler_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.32"   
+      oam_mac: "74:86:91:c5:fa:ae"                                      
+      external_ips: []
+      vnc: 
+        port: 26025
+      

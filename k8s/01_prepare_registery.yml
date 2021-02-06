@@ -1,0 +1,6 @@
+
+- hosts: REGISTERY
+  user: debian
+  become: true 
+  roles:
+    - role: 01_upload

@@ -1,0 +1,6 @@
+# Create everything
+- hosts: hypervisor
+  user: cloud
+  become: true
+  roles:     
+    - role: 04_create_vms

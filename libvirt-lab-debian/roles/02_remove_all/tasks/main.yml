@@ -1,0 +1,47 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Destroy vm if exists
+    community.libvirt.virt:
+      command: destroy
+      name: "{{ item.name }}"
+    ignore_errors: yes
+    with_items:      
+      - "{{ nodes }}"
+
+  - name: Undefine vm if exists
+    community.libvirt.virt:
+      command: undefine
+      name: "{{ item.name }}"
+    ignore_errors: yes  
+    with_items:      
+      - "{{ nodes }}"
+
+  - name: Delete workdir
+    file:
+      path: "{{ item.hypervisor.workdir }}"
+      state: absent 
+    with_items:      
+      - "{{ nodes }}"
+
+  - name: Deactivate oam network
+    community.libvirt.virt_net:  
+      state: inactive
+      name: "{{ network.oam.name }}"
+    ignore_errors: yes
+  
+  - name: Delete oam network
+    community.libvirt.virt_net:
+      state: absent
+      name: "{{ network.oam.name }}"
+    ignore_errors: yes
+  
+  - name: Delete external networks
+    community.libvirt.virt_net:
+      state: inactive
+      name: "{{ item.name }}"
+    ignore_errors: yes
+    with_items:
+      - "{{ network.external }}"
+          

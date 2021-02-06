@@ -1,0 +1,7 @@
+
+# Update nodes:
+- hosts: nodes
+  user: cloud
+  become: true
+  roles:     
+    - role: 05_update

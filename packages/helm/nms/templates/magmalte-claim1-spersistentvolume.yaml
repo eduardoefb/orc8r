@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magmalte-claim1
+  labels:
+    type: local
+spec:  
+  capacity:
+    storage: 100Mi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: magmalte-claim1
+    namespace: default    
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/media/node01/magmalte-claim1"
