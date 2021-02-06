@@ -1,4 +1,4 @@
-# AGW deployment:
+# AGW deployment ([Reference](https://magma.github.io/magma/docs/lte/setup_deb)):
 
 
 ## Add magma user:
@@ -11,7 +11,11 @@ useradd -m magma -s /bin/bash
 wget https://raw.githubusercontent.com/facebookincubator/magma/v1.3/lte/gateway/deploy/agw_install.sh
 bash agw_install.sh
 ```
+
+## After reboot, follow the installation:
+```bash
 journalctl -fu agw_installation
+```
 
 ## Create the certs directory and copy the rootCA.pem (from orc8r) into it:
 ```bash
