@@ -57,3 +57,4 @@ source <(kubectl completion bash)
 
 Once k8s cluster is running, deploy magma using the follwing guide:
 
+[<< Back](README.md)

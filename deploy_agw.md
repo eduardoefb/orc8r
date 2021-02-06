@@ -69,3 +69,4 @@ journalctl -u magma@magmad -f
 dpkg -l magma
 bash
 
+[<< Back](README.md)
