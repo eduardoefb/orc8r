@@ -67,6 +67,6 @@ journalctl -u magma@magmad -f
 ## Check magma version:
 ```bash
 dpkg -l magma
-bash
+```
 
 [<< Back](README.md)
