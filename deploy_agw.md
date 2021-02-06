@@ -35,7 +35,7 @@ bootstrap_port: 443
 
 rootca_cert: /var/opt/magma/tmp/certs/rootCA.pem
 EOF
-
+```
 ## Edit etc/hosts 
 Example:
 
