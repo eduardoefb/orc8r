@@ -3,14 +3,14 @@ At the hypervisor (Ubuntu 20.04), execute the following commands:
 
 ```shell
 cd /srv/image
-wget http://old-releases.ubuntu.com/releases/18.04.4/ubuntu-18.04-live-server-amd64.iso
+wget https://releases.ubuntu.com/18.04/ubuntu-18.04.5-live-server-amd64.iso
 qemu-img create ubuntu.img 40G
 qemu-system-x86_64 \
     -enable-kvm \
     -no-reboot \
     -m 1024 \
     -drive file=ubuntu.img,format=raw,cache=none \
-    -cdrom ubuntu-18.04-live-server-amd64.iso \
+    -cdrom ubuntu-18.04.5-live-server-amd64.iso \
     -vnc :0
 ```
 
