@@ -1,6 +1,0 @@
-# Update nodes:
-- hosts: nodes
-  user: debian
-  become: true
-  roles:     
-    - role: 01_install_packages
