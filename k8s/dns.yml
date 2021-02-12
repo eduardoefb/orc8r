@@ -1,0 +1,14 @@
+# Create everything
+  
+
+- hosts: DNS
+  user: debian
+  become: true 
+  roles:
+    - role: 04_dns
+
+- hosts: MASTER, WORKER, AGW
+  user: debian
+  become: true 
+  roles:
+    - role: 05_dns_config_nodes    

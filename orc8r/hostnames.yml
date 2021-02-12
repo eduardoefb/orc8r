@@ -1,0 +1,21 @@
+---
+  hosts:
+    nms:
+      ip: 10.5.0.132
+      hostname: "*.orc8r.int"
+    controller:
+      ip: 10.5.0.129
+      hostname: controller.orc8r.int     
+    controllerint:
+      ip: 10.96.249.173
+      hostname: controllerint.orc8r.int             
+    api:
+      ip: 10.5.0.131
+      hostname: api.orc8r.int      
+    bootstrapper:
+      ip: 10.5.0.130
+      hostname: bootstrapper.orc8r.int 
+    fluentd:
+      ip: 10.5.0.133
+      hostname: fluentd.orc8r.int 
+  

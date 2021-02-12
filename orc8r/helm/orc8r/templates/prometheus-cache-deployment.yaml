@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: prometheus-cache
+  name: prometheus-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: prometheus-cache
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: prometheus-cache
+    spec:
+      containers:
+      - args:
+        - -limit=500000
+        image: facebookincubator/prometheus-edge-hub:1.1.0
+        imagePullPolicy: ""
+        name: prometheus-cache
+        ports:
+        - containerPort: 9091
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+      imagePullSecrets:
+      - name: regcred
+status: {}

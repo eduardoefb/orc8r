@@ -14,5 +14,6 @@ spec:
     namespace: default       
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: "/media/node01/elasticsearch"
+  nfs:
+    path: /srv/k8s_volume/elasticsearch
+    server: {{ .Values.nfs.ip }}

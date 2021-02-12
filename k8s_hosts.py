@@ -11,6 +11,7 @@ worker = []
 nfs = []
 registery = []
 agw = []
+dns = []
 
 
 
@@ -21,7 +22,8 @@ for n in d['nodes']:
         worker.append(n) 
     elif "nfsreg" in n['name']:
         nfs.append(n)  
-        registery.append(n)    
+        registery.append(n)   
+        dns.append(n) 
     elif "agw" in n['name']:
         agw.append(n)                 
 
@@ -35,6 +37,10 @@ for n in worker:
 print("\n[NFS]")
 for n in nfs:
     print(n['oam_ip'])
+
+print("\n[DNS]")
+for n in nfs:
+    print(n['oam_ip'])    
 
 print("\n[REGISTERY]")
 for n in registery:

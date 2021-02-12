@@ -1,0 +1,30 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+            
+  - name: Uninstall all charts
+    shell: |
+      for h in `helm list | grep -v "NAMESPACE" | awk '{print $1}'`; do helm uninstall $h; done
+    args:
+      executable: /bin/bash
+
+  - name: Delete all pvcs
+    shell: |
+      for f in `kubectl get pvc | awk '{print $1}' | grep -v NAME`; do kubectl delete pvc $f; done
+    args:
+      executable: /bin/bash
+
+  - name: Delete all pvs
+    shell: |
+      for f in `kubectl get pv | awk '{print $1}' | grep -v NAME`; do kubectl delete pv $f; done    
+    args:
+      executable: /bin/bash
+
+  - name: Delete all secrets
+    shell: |
+      for s in `kubectl get secrets | grep -v NAME | awk '{print $1}'`; do kubectl delete secret ${s}; done
+    args:
+      executable: /bin/bash
+
+  
+

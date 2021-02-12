@@ -43,6 +43,6 @@ spec:
       - name: alertmanager-configurer-claim0
         persistentVolumeClaim:
           claimName: alertmanager-configurer-claim0
-      imagePullSecrets:
-      - name: regcred          
+      imagePullSecrets: []
+          
 status: {}

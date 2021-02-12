@@ -4,6 +4,24 @@
 
 replicaCount: 1
 
+
+nfs:
+  ip: 10.5.0.32
+
+registery:
+  ip: 10.5.0.32
+  port: 5000
+
+dns:
+  ip: 10.5.0.32
+
+
+domain: "orc8r.int"
+
+controller:
+  hostname: "controller"
+
+
 image:
   repository: nginx
   pullPolicy: IfNotPresent

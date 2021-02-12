@@ -1,0 +1,43 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "main.yml"
+   
+     
+- name: Get hosts
+  shell: |  
+    nms=`kubectl get services | grep nginx-proxy-exposed | awk '{print $4}'`
+    controller=`kubectl get services ssl-http2-legacy | grep LoadBalancer | awk '{print $4}'` 
+    controllerint=`kubectl get services controller | grep ClusterIP | awk '{print $3}'`
+    api=`kubectl get services clientcert-legacy | grep LoadBalancer | awk '{print $4}'` 
+    bootstrapper=`kubectl get services bootstrap-legacy | grep LoadBalancer | awk '{print $4}'`
+    fluentd=`kubectl get service fluentd-exposed | grep LoadBalancer | awk '{print $4}'` 
+
+    cat << EOF > hostnames.yml
+    ---
+      hosts:
+        nms:
+          ip: ${nms}
+          hostname: "*.{{ magma.domain }}"
+        controller:
+          ip: ${controller}
+          hostname: controller.{{ magma.domain }}     
+        controllerint:
+          ip: ${controllerint}
+          hostname: controllerint.{{ magma.domain }}             
+        api:
+          ip: ${api}
+          hostname: api.{{ magma.domain }}      
+        bootstrapper:
+          ip: ${bootstrapper}
+          hostname: bootstrapper.{{ magma.domain }} 
+        fluentd:
+          ip: ${fluentd}
+          hostname: fluentd.{{ magma.domain }} 
+      
+    EOF
+
+ 
+  args:
+    executable: /bin/bash
+
+

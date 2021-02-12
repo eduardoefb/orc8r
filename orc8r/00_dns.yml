@@ -1,0 +1,10 @@
+
+- hosts: localhost
+  roles:
+    - role: 03_get_names
+
+- hosts: DNS
+  user: debian
+  become: true 
+  roles:
+    - role: 04_dns

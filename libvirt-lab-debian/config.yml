@@ -15,7 +15,8 @@
     workdir: /srv/magma    
 
   nfs:
-    path: /srv/k8s_volume        
+    path: /srv/k8s_volume  
+    ip: "10.5.0.32"      
     allowed_networks:
       - 10.5.0.0/24
       - 10.2.1.32/32
@@ -163,8 +164,8 @@
 
     - name: nfsreg01
       hypervisor: "{{ hypervisor }}"
-      ram: 16096000
-      cpus: 8      
+      ram: 4096000
+      cpus: 4      
       disk: 
         - name: "compiler_disk0.qcow2"
           size: "40G"
@@ -177,3 +178,12 @@
       vnc: 
         port: 26025
       
+
+  magma:
+    workdir: /tmp/magma
+    domain: "orc8r.int"     
+    certs:
+      c: "C=US"
+
+    dns:
+      - 10.5.0.32

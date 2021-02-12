@@ -1,0 +1,25 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "main.yml"
+   
+     
+- name: Install packages 
+  apt:  
+     pkg: [ 'bind9', 'bind9utils', 'bind9-doc', 'dnsutils' ]
+
+
+- name: Restart bind
+  systemd:
+    state: restarted 
+    enabled: yes
+    name: bind9
+    
+
+
+    
+    
+    
+    
+
+
+

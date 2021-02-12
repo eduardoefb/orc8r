@@ -1,0 +1,161 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+
+  - name: Delete nfs directory
+    file:
+      path: "{{ nfs.path }}"
+      state: absent
+
+  - name: Create nfs directory
+    file:
+      path: "{{ nfs.path }}"
+      state: directory
+      mode: '0755'
+
+  - name: Create postgresql directory
+    file:
+      path: "{{ nfs.path }}/psql_0"
+      mode: '770'
+      state: directory
+      owner: root 
+      group: root
+
+  - name: Create mariadb directory
+    file:
+      path: "{{ nfs.path }}/mariadb_0"
+      mode: '770'
+      state: directory
+      owner: root 
+      group: root  
+
+  - name: Create mariadb directory
+    file:
+      path: "{{ nfs.path }}/nginx-proxy-claim0"
+      mode: '755'
+      state: directory
+      owner: root 
+      group: root            
+
+  - name: Create elasticsearch directory
+    file:
+      path: "{{ nfs.path }}/elasticsearch"
+      mode: '775'
+      state: directory
+      owner: root 
+      group: root
+
+  - name: Create alertmanager-configurer-claim0 directory
+    file:
+      path: "{{ nfs.path }}/alertmanager-configurer-claim0"      
+      mode: '755'
+      state: directory
+      owner: root 
+      group: root      
+
+
+  - name: Create alertmanager-claim0 directory
+    file:
+      path: "{{ nfs.path }}/alertmanager-claim0"      
+      mode: '755'
+      state: directory
+      owner: root 
+      group: root    
+
+  - name: Create prometheus-claim0 directory
+    file:
+      path: "{{ nfs.path }}/prometheus-claim0"      
+      mode: '755'
+      state: directory
+      owner: root 
+      group: root   
+
+  - name: Create prometheus-configurer-claim0 directory
+    file:
+      path: "{{ nfs.path }}/prometheus-configurer-claim0"      
+      mode: '755'
+      state: directory
+      owner: root 
+      group: root      
+
+  - name: Remove magma directory
+    file:
+      path: /tmp/magma-1.3.0
+      state: absent   
+
+  - name: Remove magma file
+    file:
+      path: /tmp/v1.3.0.tar.gz
+      state: absent   
+
+  - name: Download and extract file
+    shell: |
+      wget https://github.com/magma/magma/archive/v1.3.0.tar.gz -O /tmp/v1.3.0.tar.gz
+      cd /tmp/  
+      tar -xvf v1.3.0.tar.gz    
+      cp -rfv /tmp/magma-1.3.0/nms/app/packages /srv/k8s_volume/magmalte-claim0      
+      cp -rfv /tmp/magma-1.3.0/nms/app/packages/magmalte/app /srv/k8s_volume/magmalte-claim1      
+      cp -rfv /tmp/magma-1.3.0/nms/app/packages/magmalte/scripts/ /srv/k8s_volume/magmalte-claim2      
+      cp -rfv /tmp/magma-1.3.0/nms/app/packages/magmalte/server/ /srv/k8s_volume/magmalte-claim3
+          
+    args:
+      executable: /bin/bash
+      warn: no 
+
+  - name: Remove magma directory
+    file:
+      path: /tmp/magma-1.3.0
+      state: absent   
+
+  - name: Remove magma file
+    file:
+      path: /tmp/v1.3.0.tar.gz
+      state: absent         
+  
+  - name: alertmanager-configurer configuration file
+    template:
+      src: alertmanager.yml.j2
+      dest: /srv/k8s_volume/alertmanager-configurer-claim0/alertmanager.yml
+      owner: root 
+      group: root
+      mode: '755'
+
+  - name: alertmanager configuration file
+    template:
+      src: alertmanager.yml.j2
+      dest: /srv/k8s_volume/alertmanager-claim0/alertmanager.yml
+      owner: root 
+      group: root
+      mode: '755'     
+
+  - name: prometheus configuration file
+    template:
+      src: prometheus.yml.j2
+      dest: /srv/k8s_volume/prometheus-claim0/prometheus.yml
+      owner: root 
+      group: root
+      mode: '755'      
+
+  - name: prometheus-configurer configuration file
+    template:
+      src: prometheus-configurer.yml.j2
+      dest: /srv/k8s_volume/prometheus-configurer-claim0/prometheus.yml  
+      owner: root 
+      group: root
+      mode: '755'  
+
+  - name: Grafana
+    shell: |
+      docker run --name=tmp_grafana -t -d grafana/grafana:6.6.2;
+      rm -rfv /srv/k8s_volume/user-grafana/ 2>/dev/null
+      docker cp tmp_grafana:/var/lib/grafana /srv/k8s_volume/user-grafana/
+      chmod -R 777 /srv/k8s_volume/user-grafana/
+      docker stop tmp_grafana
+      docker rm tmp_grafana
+        
+    args:
+      warn: no
+      executable: /bin/bash              
+
+

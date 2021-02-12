@@ -1,0 +1,24 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"    
+- include_vars: "main.yml"
+   
+
+- name: configure dns
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: '644'
+
+- name: Reboot  
+  reboot:
+    msg: Reboot triggered
+    reboot_timeout: 360
+
+    
+    
+    
+
+
+

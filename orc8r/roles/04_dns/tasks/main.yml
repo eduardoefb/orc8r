@@ -1,0 +1,43 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "{{ playbook_dir }}/hostnames.yml"    
+- include_vars: "main.yml"
+   
+     
+- name: Install packages 
+  apt:  
+     pkg: [ 'bind9', 'bind9utils', 'bind9-doc', 'dnsutils' ]
+
+
+- name: Forward Zone 
+  template:
+    src: named.local.j2
+    dest: /etc/bind/named.conf.local
+    owner: root
+    group: bind
+    mode: '644'
+
+
+- name: Forward Zone file
+  template:
+    src: zone.db.j2
+    dest: /etc/bind/forward.{{ magma.domain }}.db
+    owner: root
+    group: bind
+    mode: '644'
+
+- name: Restart bind
+  systemd:
+    state: restarted 
+    enabled: yes
+    name: bind9
+    
+
+
+    
+    
+    
+    
+
+
+

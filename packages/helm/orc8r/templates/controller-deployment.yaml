@@ -24,11 +24,16 @@ spec:
       labels:
         io.kompose.service: controller
     spec:
+      hostAliases:
+      - ip: "{{ .Values.psql.ip }}"
+        hostnames:
+          - postgres       
+
       containers:
       - args:
         - /bin/sh
         - -c        
-        - echo "#PSQL_HA_IP# postgres" >> /etc/hosts && /usr/local/bin/wait-for-it.sh -s -t 30 postgres:5432 && /usr/bin/supervisord
+        - /usr/local/bin/wait-for-it.sh -s -t 30 postgres:5432 && /usr/bin/supervisord
         env:
         - name: DATABASE_SOURCE
           valueFrom:
@@ -50,7 +55,7 @@ spec:
               apiVersion: v1
               fieldPath: status.podIP
 
-        image: #REGISTERY#/controller:1.3.0-master
+        image: {{ .Values.registery.ip }}:{{ .Values.registery.port }}/controller:1.3.0-master
         imagePullPolicy: ""
         ports:
         - containerPort: 8080
@@ -128,6 +133,6 @@ spec:
         secret:
           defaultMode: 420
           secretName: orc8r-certs
-      imagePullSecrets:
-      - name: regcred
+      imagePullSecrets: []
+      
 status: {}
