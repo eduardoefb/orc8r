@@ -1,0 +1,15 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "{{ playbook_dir }}/hostnames.yml"    
+- include_vars: "main.yml"
+   
+     
+- name: Update dns cache in nodes
+  shell: |
+    kubectl scale deployment nginx --replicas=0
+    sleep 5
+    kubectl scale deployment nginx --replicas=1
+  args:
+    executable: /bin/bash
+
+

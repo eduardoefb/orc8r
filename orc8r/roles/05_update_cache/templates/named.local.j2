@@ -1,0 +1,11 @@
+zone "{{ magma.domain }}" IN { //Domain name
+
+     type master;
+
+     file "/etc/bind/forward.{{ magma.domain }}.db"; 
+
+     allow-update { none; }; 
+     allow-query { any; };
+     allow-transfer { any; };
+};
+

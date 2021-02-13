@@ -1,0 +1,19 @@
+@   IN  SOA     primary.{{ magma.domain }}. root.{{ magma.domain }}. (
+                                                1001    ;Serial
+                                                3H      ;Refresh
+                                                15M     ;Retry
+                                                1W      ;Expire
+                                                1D      ;Minimum TTL
+                                                )
+;Name Server Information
+@      IN  NS      primary.{{ magma.domain }}.
+
+;IP address of Name Server
+primary IN  A       {{ ansible_eth0.ipv4.address }}
+
+;Mail exchanger
+{{ magma.domain }}. IN  MX 10   mail.{{ magma.domain }}.
+
+;A - Record HostName To IP Address
+controllerint                IN  A    127.0.0.1
+
