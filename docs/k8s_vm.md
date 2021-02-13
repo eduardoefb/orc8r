@@ -1,9 +1,14 @@
 ## Create the vms for k8s and register
 
-Install the required packages on your computer:
-```bash
+As root user, install the pyaml and ansible:
+```bash 
 pip3 install pyaml
-sudo apt install -y ansible
+pip3 install ansible
+
+```
+
+Install libvirt community:
+```bash
 ansible-galaxy collection install community.libvirt
 ```
 
