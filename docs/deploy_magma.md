@@ -34,7 +34,6 @@ do
 done
 ```
 
-
 ## Deploy nms:
 ```bash 
 cd magma
@@ -52,25 +51,6 @@ kubectl get pods
 ```bash
 pod=`kubectl get pod -l io.kompose.service=magmalte -o jsonpath='{.items[0].metadata.name}'` && echo $pod
 kubectl exec -it ${pod} -- yarn setAdminPassword master admin@magma Magma123#
-```
-
-## Expose the services:
-```bash
-kubectl delete service nginx-proxy-exposed
-kubectl delete service fluentd-exposed
-kubectl expose service nginx-proxy --type=LoadBalancer --name=nginx-proxy-exposed
-kubectl expose service fluentd --type=LoadBalancer --name=fluentd-exposed
-```
-
-## Get the IPs and names:
-```bash
-export DOMAIN="orc8r.int"
-echo ${DOMAIN}
-nms=`kubectl get services | grep nginx-proxy-exposed | awk '{print $4}'` && echo $nms
-controller=`kubectl get services ssl-http2-legacy | grep LoadBalancer | awk '{print $4}'` && echo $controller
-api=`kubectl get services clientcert-legacy | grep LoadBalancer | awk '{print $4}'` && echo $api
-bootstrapper=`kubectl get services bootstrap-legacy | grep LoadBalancer | awk '{print $4}'` && echo $bootstrapper
-fluentd=`kubectl get service fluentd-exposed | grep LoadBalancer | awk '{print $4}'` && echo $fluentd
 ```
 
 ## Configure DNS
