@@ -36,21 +36,6 @@ bootstrap_port: 443
 rootca_cert: /var/opt/magma/tmp/certs/rootCA.pem
 EOF
 ```
-## Edit etc/hosts 
-Example:
-
-```bash
-cat << EOF >> /etc/hosts
-10.5.0.132 master.nms.orc8r.int
-10.5.0.131 controller.orc8r.int
-10.5.0.130 bootstrapper-controller.orc8r.int
-10.5.0.129 api.orc8r.int
-10.5.0.133 fluentd.orc8r.int
-10.5.0.132 org01.nms.orc8r.int
-10.5.0.132 org02.nms.orc8r.int
-10.5.0.132 org03.nms.orc8r.int
-EOF
-```
 
 ## Display information from agw and create it into orchestrator:
 ```bash

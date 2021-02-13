@@ -9,7 +9,7 @@
 
 - [4 - Create the virtual machines enodeb and ue (optional) ](docs/opencells.md)
 
-- [5 - Install orc8r and nms ](docs/deploy_magma.md)
+- [5 - Deploy orc8r and nms ](docs/deploy_magma.md)
 
-- [5 - Install agw ](docs/deploy_agw.md)
+- [6 - Install agw ](docs/deploy_agw.md)
 <!-- TOC -->
