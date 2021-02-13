@@ -1,0 +1,5 @@
+
+- hosts: localhost
+  roles:
+    - role: 05_update_cache
+
