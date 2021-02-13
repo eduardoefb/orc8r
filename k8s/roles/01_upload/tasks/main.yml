@@ -2,7 +2,7 @@
 - include_vars: "{{ playbook_dir }}/config.yml"      
 - include_vars: "main.yml"
    
-- name: Upload images
+- name: Preparing upload script
   template:
     src: upload.sh.j2
     dest: /tmp/upload.sh
@@ -10,7 +10,7 @@
     owner: root
     group: root
 
-- name: Upload images 2
+- name: Upload images
   shell: |
     bash -x /tmp/upload.sh
   args:

@@ -1,0 +1,21 @@
+# Create everything
+  
+- hosts: localhost
+  roles:     
+    - role: 00_clear   
+
+- hosts: NFS
+  user: debian
+  become: true
+  roles:     
+    - role: 01_nfs     
+
+- hosts: localhost
+  roles:
+    - role: 02_deploy_orc8r
+
+
+
+
+
+

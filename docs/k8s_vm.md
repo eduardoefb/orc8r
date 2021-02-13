@@ -17,7 +17,7 @@ time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts create_vm.yml
 
 ```
 
-After vm initialization, start the magma image compilation:
+After vm initialization, compile, build and upload images to the registery:
 
 ```bash 
 cd magma
@@ -27,18 +27,8 @@ cd k8s
 time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 01_compile.yml
 ```
 
-Prepare register to upload the images:
-```bash
-time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 01_prepare_registery.yml
-```
+To confirm that image is uploaded, check if they are available in registery url:  Ex: http://10.5.0.32:5000/v2/_catalog
 
-Connect to the register and upload the images manually:
-```
-ssh debian@10.5.0.32 
-sudo su - 
-bash /tmp/upload.sh upload
-exit
-```
 
 Deploy k8s cluster:
 ```bash

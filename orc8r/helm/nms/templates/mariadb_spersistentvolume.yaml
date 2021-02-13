@@ -13,6 +13,7 @@ spec:
     name: nmsdb
     namespace: default       
   accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/media/node01/magmalte-claim0"
+    - ReadWriteOnce  
+  nfs:
+    path: /srv/k8s_volume/mariadb_0
+    server: {{ .Values.nfs.ip }}

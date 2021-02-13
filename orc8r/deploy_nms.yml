@@ -1,0 +1,11 @@
+# Create everything
+  
+- hosts: localhost
+  roles:
+    - role: 03_deploy_nms
+
+
+
+
+
+

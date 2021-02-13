@@ -24,10 +24,7 @@ spec:
       labels:
         io.kompose.service: magmalte
     spec:
-      hostAliases:
-      - ip: "#CONTROLLER_EXTERNAL_IP#"
-        hostnames:
-          - #CONTROLLER_HOSTNAME#          
+       
           
       containers:
       - args:        
@@ -44,7 +41,7 @@ spec:
         - name: API_CERT_FILENAME
           value: /run/secrets/api_cert
         - name: API_HOST
-          value: #CONTROLLER_HOSTNAME#
+          value: api.{{ .Values.domain }}
         - name: API_PRIVATE_KEY_FILENAME
           value: /run/secrets/api_key
         - name: HOST
@@ -71,7 +68,7 @@ spec:
               key: MYSQL_USER
         - name: PORT
           value: "8081"
-        image: 10.5.0.32:5000/magmalte:1.3.0-master
+        image: {{ .Values.registery_url }}/magmalte:1.3.0-master
         name: magmalte
         ports:
         - containerPort: 8081
@@ -109,6 +106,6 @@ spec:
       - name: magmalte-claim3
         persistentVolumeClaim:
           claimName: magmalte-claim3      
-      imagePullSecrets:
-       - name: regcred
+      imagePullSecrets: []
+       
 status: {}       

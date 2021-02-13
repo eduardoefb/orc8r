@@ -1,27 +1,20 @@
 # Magma installation in a k8s cluster
 
-## Copy configuraton file to the playbook directory:
+## Deploy orchestrator:
 ```bash 
 cat k8s_vm_config.yml > orc8r/config.yml
 python3 k8s_hosts.py k8s_vm_config.yml > orc8r/hosts
 cd orc8r
-time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts run.yml
+time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts deploy_orc8r.yml
 ```
 
-## Install orc8r:
-Edit the values.yml first
-```bash
-cd helm
-helm install orc8r orc8r/
-```
-
-## Check:
+## Check orc8r installation:
 ```bash
 helm list
 kubectl get pods
 ```
 
-## Generate admin_operator certificate:
+## Generate admin_operator certificate to nms deployment:
 ```bash
 pod=`kubectl get pods -l io.kompose.service=controller -o jsonpath='{.items[0].metadata.name}'` && echo $pod
 kubectl exec -it ${pod} -- bash
@@ -33,30 +26,20 @@ exit
 
 ## Copy admin_operator certificate your local disk and create the secrets:
 ```bash
-cd /tmp/magma/
-cd certs
+cd orc8r_deployment/certs
+
 for certfile in admin_operator.pem admin_operator.key.pem admin_operator.pfx
 do
     kubectl cp ${pod}:/var/opt/magma/bin/${certfile} ./${certfile}
 done
-rm -rf nms-certs
-mkdir nms-certs
-cp controller.key nms-certs
-cp admin_operator.key.pem nms-certs/api_key
-cp admin_operator.pem nms-certs/api_cert
-cp controller.crt nms-certs
-
-kubectl delete secret nms-certs
-kubectl create secret generic nms-certs --from-file=nms-certs/
-
-kubectl describe secret nms-certs 
-cd ..
 ```
 
-## Install nms:
-```bash
-cd helm
-helm install nms nms/
+
+## Deploy nms:
+```bash 
+cd magma
+cd orc8r
+time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts deploy_nms.yml
 ```
 
 ## Check:
@@ -90,31 +73,10 @@ bootstrapper=`kubectl get services bootstrap-legacy | grep LoadBalancer | awk '{
 fluentd=`kubectl get service fluentd-exposed | grep LoadBalancer | awk '{print $4}'` && echo $fluentd
 ```
 
-## Add the entries to /etc/hosts
-```bash
-org_list=("org01" "org02" "org03")
-cat << EOF > etc_hosts
-${nms} master.nms.${DOMAIN}
-${controller} controller.${DOMAIN}
-${bootstrapper} bootstrapper-controller.${DOMAIN}
-${api} api.${DOMAIN}
-${fluentd} fluentd.${DOMAIN}
-EOF
-
-
-for o in ${org_list[*]}; do
-   echo "${nms} ${o}.nms.${DOMAIN}" >> etc_hosts
-done
-echo "https://master.nms.${DOMAIN}" 
-```
-## Important: Add the entries of etc_hosts to your /etc/hosts
-cat etc_hosts
-
 ## Configure DNS
 ```bash
-ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 00_dns.yml
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts configure_dns.yml
 ```
-
 
 # Create test subscribers:
 

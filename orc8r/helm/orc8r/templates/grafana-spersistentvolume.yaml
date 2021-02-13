@@ -16,4 +16,4 @@ spec:
     - ReadWriteOnce
   nfs:
     path: /srv/k8s_volume/user-grafana
-    server: 10.5.0.32
+    server: {{ .Values.nfs.ip }}

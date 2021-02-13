@@ -28,7 +28,7 @@ spec:
       - args:
         - -port=9100
         - -rules-dir=/etc/configs/alert_rules
-        - -prometheusURL=10.99.118.114:9090
+        - -prometheusURL=prometheus:9090
         - -multitenant-label=networkID
         - -restrict-queries
         image: facebookincubator/prometheus-configurer:1.0.0

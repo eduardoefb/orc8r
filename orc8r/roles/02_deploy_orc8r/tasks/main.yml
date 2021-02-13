@@ -1,0 +1,206 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+            
+  - name: psql pv template
+    template:
+      src: psql_pv.yml.j2
+      dest: /tmp/psql_pv.yml
+
+  - name: Exec pv template
+    shell: |                
+      kubectl delete -f /tmp/psql_pv.yml 2>/dev/null
+      kubectl apply -f /tmp/psql_pv.yml
+    args:
+      executable: /bin/bash
+  
+  - name: Create psql 
+    shell: |
+      helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null
+      helm install psql bitnami/postgresql
+
+  - name: Wait for psql
+    shell: |
+      kubectl delete service psql-postgresql-exposed
+      kubectl expose service psql-postgresql --type=LoadBalancer --name=psql-postgresql-exposed    
+      export POSTGRES_DB="orc8r"
+      export POSTGRES_USER="postgres"
+      export POSTGRES_PASSWORD=$(kubectl get secret --namespace default psql-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+      psql_ip=`kubectl get service psql-postgresql-exposed | awk '/psql/ {print $4}'` && echo $psql_ip
+      P_PW=$(kubectl get secret --namespace default psql-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+      PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${psql_ip} -p 5432 -U ${POSTGRES_USER} -c "drop database if exists ${POSTGRES_DB};"
+    register: result
+    until: result.stdout.find("DROP DATABASE") != -1
+    retries: 100
+    delay: 10   
+    args:
+      executable: /bin/bash        
+
+  - name: Delete magma workdir
+    file:
+      path: "{{ playbook_dir }}/orc8r_deployment/"
+      state: absent
+
+  - name: Create magma workdir
+    file:
+      path: "{{ playbook_dir }}/orc8r_deployment/"
+      state: directory
+  
+  - name: Create magma certs workdir
+    file:
+      path: "{{ playbook_dir }}/orc8r_deployment/certs"
+      state: directory
+  
+  - name: Create certificates
+    shell: |      
+      cd {{ playbook_dir }}/orc8r_deployment/certs/
+      cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 >  {{ playbook_dir }}/orc8r_deployment/certs/.rnd
+      openssl genrsa -out rootCA.key 2048
+      openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650 -out rootCA.pem -subj "/{{ magma.certs.c }}/CN=rootca.{{ magma.domain }}"
+      openssl genrsa -out controller.key 2048
+      openssl req -new -key controller.key -out controller.csr -subj "/{{ magma.certs.c }}/CN=*.{{ magma.domain }}"
+      openssl x509 -req -in controller.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out controller.crt -days 3650 -sha256
+      rm -f controller.csr rootCA.key rootCA.srl
+      openssl genrsa -out certifier.key 2048
+      openssl req -x509 -new -nodes -key certifier.key -sha256 -days 3650 -out certifier.pem -subj "/{{ magma.certs.c }}/CN=certifier.{{ magma.domain }}"
+      openssl genrsa -out bootstrapper.key 2048
+      openssl genrsa -out fluentd.key 2048
+      openssl req -x509 -new -nodes -key fluentd.key -sha256 -days 3650 -out fluentd.pem -subj "/{{ magma.certs.c }}/CN=fluentd.{{ magma.domain }}"    
+    args:
+      executable: /bin/bash
+  
+  - name: Create the secrets for certificates
+    shell: |
+      cd {{ playbook_dir }}/orc8r_deployment/certs/
+      mkdir secrets
+      mkdir fluentd
+      cp -v controller* secrets
+      cp -v rootCA.pem secrets
+      cp -v bootstrapper.key secrets
+      cp -v certifier* secrets
+      ls -lhtr secrets
+      cp -v fluentd* fluentd
+      cp -v certifier.pem fluentd
+      kubectl delete secret orc8r-certs 2>/dev/null
+      kubectl create secret generic orc8r-certs --from-file=secrets/ 
+      kubectl delete secret fluentd-certs 2>/dev/null
+      kubectl create secret generic fluentd-certs --from-file=fluentd/
+      rm -rf secrets
+      rm -rf fluentd
+    args:
+      executable: /bin/bash
+
+  - name: Create dummy register secret
+    shell: |
+      GITHUB_USER="foo"
+      GITHUB_TOKEN="foo"
+
+      kubectl delete secret regcred
+      kubectl create secret docker-registry regcred \
+          --docker-server="docker.pkg.github.com" \
+          --docker-username=${GITHUB_USER} \
+          --docker-password=${GITHUB_TOKEN}     
+      kubectl describe secret regcred
+    args:
+      executable: /bin/bash   
+    
+  - name: Create psql database
+    shell: |
+      export POSTGRES_DB="orc8r"
+      export POSTGRES_USER="postgres"
+      export POSTGRES_PASSWORD=$(kubectl get secret --namespace default psql-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+      psql_ip=`kubectl get service psql-postgresql-exposed | awk '/psql/ {print $4}'` && echo $psql_ip
+      P_PW=$(kubectl get secret --namespace default psql-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+      PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${psql_ip} -p 5432 -U ${POSTGRES_USER} -c "drop database if exists ${POSTGRES_DB};"
+      PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${psql_ip} -p 5432 -U ${POSTGRES_USER} -c "create database ${POSTGRES_DB};";
+      PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${psql_ip} -p 5432 -U ${POSTGRES_USER} -c "grant all privileges on database ${POSTGRES_DB} to ${POSTGRES_USER};" 
+    retries: 30
+    delay: 30   
+    args:
+      executable: /bin/bash  
+
+  - name: Delete psql-postgresql-exposed service
+    shell: |
+      kubectl delete service psql-postgresql-exposed
+    args:
+      executable: /bin/bash  
+
+  - name: Create database secrets
+    shell: |
+      cd {{ playbook_dir }}/orc8r_deployment/
+      mkdir db_secrets
+      cd db_secrets
+      export POSTGRES_DB="orc8r"
+      export POSTGRES_USER="postgres"      
+      export POSTGRES_PASSWORD=$(kubectl get secret --namespace default psql-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+      echo -n "dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} host=postgres sslmode=disable" > DATABASE_SOURCE
+      echo -n ${POSTGRES_DB} > POSTGRES_DB
+      echo -n ${POSTGRES_PASSWORD} > POSTGRES_PASSWORD
+      echo -n ${POSTGRES_USER} > POSTGRES_USER
+      MYSQL_DATABASE=${POSTGRES_DB}
+      MYSQL_PASSWORD=`openssl rand -hex 10`
+      MYSQL_ROOT_PASSWORD=`openssl rand -hex 10`
+      MYSQL_USER="mysql"
+      echo -n ${MYSQL_DATABASE} > MYSQL_DATABASE
+      echo -n ${MYSQL_PASSWORD} > MYSQL_PASSWORD
+      echo -n ${MYSQL_ROOT_PASSWORD} > MYSQL_ROOT_PASSWORD
+      echo -n ${MYSQL_USER} > MYSQL_USER
+      kubectl delete secret controller
+      kubectl delete secret postgres
+      kubectl delete secret mysql
+      kubectl create secret generic controller --from-file=DATABASE_SOURCE=./DATABASE_SOURCE
+      kubectl create secret generic postgres \
+              --from-file=POSTGRES_DB=./POSTGRES_DB \
+              --from-file=POSTGRES_USER=./POSTGRES_USER \
+              --from-file=POSTGRES_PASSWORD=./POSTGRES_PASSWORD
+
+      kubectl create secret generic mysql \
+              --from-file=MYSQL_DATABASE=./MYSQL_DATABASE \
+              --from-file=MYSQL_PASSWORD=./MYSQL_PASSWORD \
+              --from-file=MYSQL_ROOT_PASSWORD=./MYSQL_ROOT_PASSWORD \
+              --from-file=MYSQL_USER=./MYSQL_USER
+
+      kubectl describe secret controller
+      kubectl describe secret postgres
+      kubectl describe secret mysql    
+
+      cd {{ playbook_dir }}/orc8r_deployment/    
+      mkdir magmadb_secrets
+      cd magmadb_secrets
+      echo -n ${MYSQL_DATABASE} > MYSQL_DATABASE
+      echo -n ${MYSQL_PASSWORD} > MYSQL_PASSWORD
+      echo -n ${MYSQL_ROOT_PASSWORD} > MYSQL_ROOT_PASSWORD
+      echo -n ${MYSQL_USER} > MYSQL_USER
+      kubectl delete secret nmsdb
+      kubectl create secret generic nmsdb \
+              --from-file=MYSQL_DATABASE=./MYSQL_DATABASE \
+              --from-file=MYSQL_PASSWORD=./MYSQL_PASSWORD \
+              --from-file=MYSQL_ROOT_PASSWORD=./MYSQL_ROOT_PASSWORD \
+              --from-file=MYSQL_USER=./MYSQL_USER
+
+      kubectl describe secret nmsdb
+      cd {{ playbook_dir }}/orc8r_deployment/certs/
+      rm -rfv magmadb_secrets
+
+    args:
+      executable: /bin/bash   
+    
+
+  - name: Create values for orc8r 
+    template:  
+      src: values.yml.j2
+      dest: "{{ playbook_dir }}/helm/orc8r/values.yaml"
+
+  - name: Create values for  nms
+    template:  
+      src: values.yml.j2
+      dest: "{{ playbook_dir }}/helm/nms/values.yaml"      
+
+  - name: Deploy orc8r
+    shell: |
+      cd {{ playbook_dir }}/helm/
+      helm install orc8r orc8r/
+    args:
+      executable: /bin/bash
+
+     

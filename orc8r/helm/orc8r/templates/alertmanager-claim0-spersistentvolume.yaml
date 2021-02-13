@@ -16,4 +16,4 @@ spec:
     - ReadOnlyMany 
   nfs:
     path: /srv/k8s_volume/alertmanager-claim0
-    server: 10.5.0.32
+    server: {{ .Values.nfs.ip }}

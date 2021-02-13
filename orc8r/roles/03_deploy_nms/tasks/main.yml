@@ -1,0 +1,67 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+
+  - name: Create nms secrets
+    shell: |
+      cd {{ playbook_dir }}/orc8r_deployment/certs/
+      rm -rf nms-certs
+      mkdir nms-certs
+      cp controller.key nms-certs
+      cp admin_operator.key.pem nms-certs/api_key
+      cp admin_operator.pem nms-certs/api_cert
+      cp controller.crt nms-certs
+
+      kubectl delete secret nms-certs
+      kubectl create secret generic nms-certs --from-file=nms-certs/
+
+    args:
+      executable: /bin/bash
+
+
+  - name: Deploy nms
+    shell: |
+      cd {{ playbook_dir }}/helm/
+      helm install nms nms/
+    args:
+      executable: /bin/bash
+
+  - name: Expose the services
+    shell: |
+      kubectl delete service nginx-proxy-exposed
+      kubectl delete service fluentd-exposed
+      kubectl expose service nginx-proxy --type=LoadBalancer --name=nginx-proxy-exposed
+      kubectl expose service fluentd --type=LoadBalancer --name=fluentd-exposed
+    args:
+      executable: /bin/bash  
+
+
+
+
+  - name: Create etc_hosts file
+    shell: |
+      DOMAIN={{ magma.domain }}
+
+      nms=`kubectl get services | grep nginx-proxy-exposed | awk '{print $4}'` && echo $nms
+      controller=`kubectl get services ssl-http2-legacy | grep LoadBalancer | awk '{print $4}'` && echo $controller
+      api=`kubectl get services clientcert-legacy | grep LoadBalancer | awk '{print $4}'` && echo $api
+      bootstrapper=`kubectl get services bootstrap-legacy | grep LoadBalancer | awk '{print $4}'` && echo $bootstrapper
+      fluentd=`kubectl get service fluentd-exposed | grep LoadBalancer | awk '{print $4}'` && echo $fluentd
+
+      org_list=("org01" "org02" "org03")
+      cat << EOF > {{ playbook_dir }}/etc_hosts
+      ${nms} master.nms.${DOMAIN}
+      ${controller} controller.${DOMAIN}
+      ${bootstrapper} bootstrapper-controller.${DOMAIN}
+      ${api} api.${DOMAIN}
+      ${fluentd} fluentd.${DOMAIN}
+      EOF
+
+
+      for o in ${org_list[*]}; do
+        echo "${nms} ${o}.nms.${DOMAIN}" >> {{ playbook_dir }}/etc_hosts
+      done
+      echo "https://master.nms.${DOMAIN}"   
+    args:
+      executable: /bin/bash       
