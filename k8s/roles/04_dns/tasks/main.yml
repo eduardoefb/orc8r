@@ -8,6 +8,15 @@
      pkg: [ 'bind9', 'bind9utils', 'bind9-doc', 'dnsutils' ]
 
 
+
+- name: Forward Zone file using temporary values
+  template:
+    src: zone.db.j2
+    dest: /etc/bind/forward.{{ magma.domain }}.db
+    owner: root
+    group: bind
+    mode: '644'
+
 - name: Restart bind
   systemd:
     state: restarted 
