@@ -25,59 +25,61 @@
   - name: Create mariadb directory
     file:
       path: "{{ nfs.path }}/mariadb_0"
-      mode: '770'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root  
+      owner: nobody 
+      group: nogroup   
+
 
   - name: Create mariadb directory
     file:
       path: "{{ nfs.path }}/nginx-proxy-claim0"
-      mode: '755'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root            
+      owner: nobody 
+      group: nogroup   
+          
 
   - name: Create elasticsearch directory
     file:
       path: "{{ nfs.path }}/elasticsearch"
-      mode: '775'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root
+      owner: nobody 
+      group: nogroup   
 
   - name: Create alertmanager-configurer-claim0 directory
     file:
       path: "{{ nfs.path }}/alertmanager-configurer-claim0"      
-      mode: '755'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root      
-
+      owner: nobody 
+      group: nogroup   
+  
 
   - name: Create alertmanager-claim0 directory
     file:
       path: "{{ nfs.path }}/alertmanager-claim0"      
-      mode: '755'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root    
+      owner: nobody 
+      group: nogroup    
 
   - name: Create prometheus-claim0 directory
     file:
       path: "{{ nfs.path }}/prometheus-claim0"      
-      mode: '755'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root   
+      owner: nobody 
+      group: nogroup   
 
   - name: Create prometheus-configurer-claim0 directory
     file:
       path: "{{ nfs.path }}/prometheus-configurer-claim0"      
-      mode: '755'
+      mode: '744'
       state: directory
-      owner: root 
-      group: root      
+      owner: nobody 
+      group: nogroup   
 
   - name: Remove magma directory
     file:

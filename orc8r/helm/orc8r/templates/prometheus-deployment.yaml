@@ -37,13 +37,21 @@ spec:
         resources: {}
         volumeMounts:
         - mountPath: /etc/prometheus
+          name: metrics-config
+        
+        - mountPath: /prometheus
           name: prometheus-claim0
-          readOnly: true
+          readOnly: false
       restartPolicy: Always
       serviceAccountName: ""
       volumes:
-      - name: prometheus-claim0
-        persistentVolumeClaim:
+      - configMap:
+          defaultMode: 511
+          name:  metrics-config
+        name: metrics-config
+      - persistentVolumeClaim:
           claimName: prometheus-claim0
-          readOnly: true
+          readOnly: false        
+        name: prometheus-claim0
+
 status: {}
