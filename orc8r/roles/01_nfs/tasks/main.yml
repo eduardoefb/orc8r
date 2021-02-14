@@ -39,14 +39,13 @@
       owner: nobody 
       group: nogroup   
           
-
   - name: Create elasticsearch directory
     file:
       path: "{{ nfs.path }}/elasticsearch"
-      mode: '744'
+      mode: '775'
       state: directory
-      owner: nobody 
-      group: nogroup   
+      owner: root 
+      group: root   
 
   - name: Create alertmanager-configurer-claim0 directory
     file:
