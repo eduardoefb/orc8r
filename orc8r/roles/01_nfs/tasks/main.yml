@@ -131,14 +131,6 @@
       group: root
       mode: '755'     
 
-  - name: prometheus configuration file
-    template:
-      src: prometheus.yml.j2
-      dest: /srv/k8s_volume/prometheus-claim0/prometheus.yml
-      owner: root 
-      group: root
-      mode: '755'      
-
   - name: prometheus-configurer configuration file
     template:
       src: prometheus-configurer.yml.j2
