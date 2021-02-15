@@ -36,7 +36,9 @@ To confirm that image is uploaded, check if they are available in registery url:
 
 Example:
 ```bash
-curl http://10.5.0.32:5000/v2/_catalog
+ curl http://10.5.0.32:5000/v2/_catalog
+{"repositories":["controller","magmalte","nginx"]}
+
 ```
 
 

@@ -8,3 +8,7 @@
   become: true 
   roles:
     - role: 04_dns
+
+- hosts: localhost
+  roles:
+    - role: 05_update_cache
