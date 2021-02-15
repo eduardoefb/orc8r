@@ -12,7 +12,7 @@ pip3 install ansible
 ansible-galaxy collection install community.libvirt
 ```
 
-Deploy the virtual machines (edit the file k8s_vm_config.yml first):
+## Deploy the virtual machines (edit the file k8s_vm_config.yml first):
 ```bash
 cd magma
 cat k8s_vm_config.yml > libvirt-lab-debian/config.yml
