@@ -79,6 +79,7 @@ connect_ue01.sh
 
 Once PDP context is created, open the ue namespace, and add the default route:
 ```bash
+ip netns exec ue01 bash
 ip route add default dev oaitun_ue1
 ```
 
