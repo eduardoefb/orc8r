@@ -1,0 +1,4 @@
+#!/bin/bash
+
+UE=$1
+cd ~/${UE} && /root/openairinterface5g/cmake_targets/ran_build/build/lte-uesoftmodem -C 2685000000 -r 50 --rfsim --rfsimulator.serveraddr {{ enodeb.uu_ip_address }}

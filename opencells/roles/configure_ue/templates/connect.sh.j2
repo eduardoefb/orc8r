@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Delete namespace if exists:
+
+ipo=$(({{ ueind.id }}*4+1))
+ipi=$(({{ ueind.id }}*4+2))
+
+
+ip netns delete {{ ueind.name }} 2>/dev/null
+ip link del vo-{{ ueind.name }} 2>/dev/null
+ip link del vi-{{ ueind.name }} 2>/dev/null
+ip netns add {{ ueind.name }}
+ip link add vo-{{ ueind.name }} type veth peer name vi-{{ ueind.name }}
+ip link set vi-{{ ueind.name }} netns {{ ueind.name }}
+ip addr add 172.31.0.${ipo}/30 dev vo-{{ ueind.name }} 
+ip link set vo-{{ ueind.name }} up
+
+iptables -D FORWARD -i eth0 -o vo-{{ ueind.name }} -j ACCEPT 2>/dev/null
+iptables -D FORWARD -o eth0 -i vo-{{ ueind.name }} -j ACCEPT 2>/dev/null
+
+iptables -A FORWARD -i eth0 -o vo-{{ ueind.name }} -j ACCEPT 
+iptables -A FORWARD -o eth0 -i vo-{{ ueind.name }} -j ACCEPT 
+
+if [ `iptables -t nat -S | grep "\-A POSTROUTING \-o eth0 \-j MASQUERADE" | wc -l` -eq 0 ]; then
+    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+fi
+
+ip netns exec {{ ueind.name }} ip link set dev lo up 
+ip netns exec {{ ueind.name }} ip addr add 172.31.0.${ipi}/30 dev vi-{{ ueind.name }}
+ip netns exec {{ ueind.name }} ip link set vi-{{ ueind.name }} up 
+ip netns exec {{ ueind.name }} ip route add {{ enodeb.uu_ip_address }}/32 via 172.31.0.${ipo}
+ip netns exec {{ ueind.name }} /usr/local/bin/connect_enodeb.sh {{ ueind.name }}
+
+
+

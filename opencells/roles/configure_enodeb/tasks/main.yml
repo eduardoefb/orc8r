@@ -10,3 +10,11 @@
       group: root 
       mode: '744'
       
+  - name: Create script 
+    template:
+      src: connect.sh.j2
+      dest: /usr/local/bin/connect_to_mme.sh
+      mode: '755'
+    
+
+      

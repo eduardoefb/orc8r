@@ -96,6 +96,7 @@
 
 
   enodeb:
+    uu_ip_address: 10.10.1.20
     mme_ip_address: 10.10.0.10
     s1_interface: "eth1"
     s1_u_interface: "eth1"
@@ -108,26 +109,95 @@
     
     tracking_area_code: 100
 
-  ue:    
-    plmn_list:
-      - id: 0
-        full_name: "Oi"
-        short_name: "Oi"
-        mcc: 724
-        mnc: 31
-    user:
-      imei: "356113022094150"
-      manufacturer: "EURECOM"
-      model: "LTE Android PC"
-      pin: "0000"
+  ue:
+    - name: ue01
+      id: 1
+      plmn_list:
+        - id: 0
+          full_name: "Oi"
+          short_name: "Oi"
+          mcc: 724
+          mnc: 31
+      user:
+        imei: "356113022094152"
+        manufacturer: "EURECOM"
+        model: "LTE Android PC"
+        pin: "0000"
 
-    sim:
-      msin: "0000000001"
-      key: "00000000000000000000000000000001"
-      opc: "00000000000000000000000000000001"
-      msisdn: "5521989240013"
-    
-    hplmn: "72431"
+      sim:
+        msin: "0000000001"
+        key: "00000000000000000000000000000001"
+        opc: "00000000000000000000000000000001"
+        msisdn: "5521989240011"
+      
+      hplmn: "72431"
+
+    - name: ue02  
+      id: 2     
+      plmn_list:
+        - id: 0
+          full_name: "Oi"
+          short_name: "Oi"
+          mcc: 724
+          mnc: 31
+      user:
+        imei: "356113022094152"
+        manufacturer: "EURECOM"
+        model: "LTE Android PC"
+        pin: "0000"
+
+      sim:
+        msin: "0000000002"
+        key: "00000000000000000000000000000002"
+        opc: "00000000000000000000000000000002"
+        msisdn: "5521989240012"
+      
+      hplmn: "72431"      
+
+    - name: ue03    
+      id: 3    
+      plmn_list:
+        - id: 0
+          full_name: "Oi"
+          short_name: "Oi"
+          mcc: 724
+          mnc: 31
+      user:
+        imei: "356113022094152"
+        manufacturer: "EURECOM"
+        model: "LTE Android PC"
+        pin: "0000"
+
+      sim:
+        msin: "0000000003"
+        key: "00000000000000000000000000000003"
+        opc: "00000000000000000000000000000003"
+        msisdn: "5521989240013"
+      
+      hplmn: "72431"     
+
+
+    - name: ue04 
+      id: 4    
+      plmn_list:
+        - id: 0
+          full_name: "Oi"
+          short_name: "Oi"
+          mcc: 724
+          mnc: 31
+      user:
+        imei: "356113022094154"
+        manufacturer: "EURECOM"
+        model: "LTE Android PC"
+        pin: "0000"
+
+      sim:
+        msin: "0000000004"
+        key: "00000000000000000000000000000004"
+        opc: "00000000000000000000000000000004"
+        msisdn: "5521989240014"
+      
+      hplmn: "72431"          
 
 
 

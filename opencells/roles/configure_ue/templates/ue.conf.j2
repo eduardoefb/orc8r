@@ -1,7 +1,7 @@
 # List of known PLMNS
 PLMN: {
 
-{% for p in ue.plmn_list %}
+{% for p in ueind.plmn_list %}
     PLMN{{ p.id }}: {
            FULLNAME="{{ p.full_name }}";
            SHORTNAME="{{ p.short_name }}";
@@ -15,30 +15,30 @@ PLMN: {
 UE0:
 {
     USER: {
-        IMEI="{{ ue.user.imei }}";
-        MANUFACTURER="{{ ue.user.manufacturer }}";
-        MODEL="{{ ue.user.model }}";
-        PIN="{{ ue.user.pin }}";
+        IMEI="{{ ueind.user.imei }}";
+        MANUFACTURER="{{ ueind.user.manufacturer }}";
+        MODEL="{{ ueind.user.model }}";
+        PIN="{{ ueind.user.pin }}";
     };
 
     SIM: {
-        MSIN="{{ ue.sim.msin }}";
-        USIM_API_K="{{ ue.sim.key }}";
-        OPC=       "{{ ue.sim.opc }}";
-        MSISDN="{{ ue.sim.msisdn }}";
+        MSIN="{{ ueind.sim.msin }}";
+        USIM_API_K="{{ ueind.sim.key }}";
+        OPC=       "{{ ueind.sim.opc }}";
+        MSISDN="{{ ueind.sim.msisdn }}";
     };
 
     # Home PLMN Selector with Access Technology
-    HPLMN= "{{ ue.hplmn }}";
+    HPLMN= "{{ ueind.hplmn }}";
 
     # User controlled PLMN Selector with Access Technology
     UCPLMN_LIST = ();
 
     # Operator PLMN List
-    OPLMN_LIST = ("{{ ue.hplmn }}");
+    OPLMN_LIST = ("{{ ueind.hplmn }}");
 
     # Operator controlled PLMN Selector with Access Technology
-    OCPLMN_LIST = ("{{ ue.hplmn }}");
+    OCPLMN_LIST = ("{{ ueind.hplmn }}");
 
     # Forbidden plmns
     FPLMN_LIST = ();

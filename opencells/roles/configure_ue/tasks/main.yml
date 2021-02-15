@@ -2,11 +2,65 @@
   - include_vars: "{{ playbook_dir }}/config.yml"      
   - include_vars: "main.yml"
 
-  - name: Configure enodeb
+  - name: Create configuration file for UEs
     template: 
       src: ue.conf.j2
-      dest: /root/opencells-mods/sim_modified.conf
+      dest: "/root/opencells-mods/{{ item.name }}.conf"
       owner: root 
       group: root 
       mode: '744'
+    vars:
+      ueind: "{{ item }}"
+    with_items:
+      "{{ ue }}"
+
+  - name: Generating sim for UEs
+    shell: |
+      cd ~
+      rm -rf ~/{{ item.name }} 2>/dev/null
+      mkdir ~/{{ item.name }}
+      cd ~/{{ item.name }}
+      ~/openairinterface5g/cmake_targets/nas_sim_tools/build/conf2uedata -c/root/opencells-mods/{{ item.name }}.conf -o .
+    args:
+      executable: /bin/bash      
+    with_items:
+      "{{ ue }}"  
+
+  - name: Generating sim for UEs
+    shell: |
+      cd ~
+      rm -rf ~/{{ item.name }} 2>/dev/null
+      mkdir ~/{{ item.name }}
+      cd ~/{{ item.name }}
+      ~/openairinterface5g/cmake_targets/nas_sim_tools/build/conf2uedata -c/root/opencells-mods/{{ item.name }}.conf -o .
+      iptables -P INPUT ACCEPT
+      iptables -P OUTPUT ACCEPT
+      iptables -P FORWARD ACCEPT
+      iptables -F
+      iptables -t nat -F
+      iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+      if [ `grep 'net.ipv4.ip_forward = 1' /etc/sysctl.conf | wc -l` -eq 0 ]; then echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf && sysctl --system; fi
       
+    args:
+      executable: /bin/bash      
+    with_items:
+      "{{ ue }}"        
+
+      
+  - name: Create scripts, part 1
+    template:
+      src: connect.sh.j2
+      dest: /usr/local/bin/connect_{{ item.name }}.sh
+      mode: '755' 
+    vars:
+      ueind: "{{ item }}"       
+    with_items:
+      "{{ ue }}"          
+
+
+  - name: Create scripts, part 2
+    template:
+      src: connect_enodeb.sh.j2
+      dest: /usr/local/bin/connect_enodeb.sh
+      mode: '755' 
+    
