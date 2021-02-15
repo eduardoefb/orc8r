@@ -12,7 +12,7 @@ pip3 install ansible
 ansible-galaxy collection install community.libvirt
 ```
 
-## Deploy the virtual machines (edit the file k8s_vm_config.yml first):
+### Deploy the virtual machines (edit the file k8s_vm_config.yml first):
 ```bash
 cd magma
 cat k8s_vm_config.yml > libvirt-lab-debian/config.yml
@@ -22,7 +22,7 @@ time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts create_vm.yml
 
 ```
 
-After vm initialization, compile, build and upload images to the registery:
+### After vm initialization, compile, build and upload images to the registery:
 
 ```bash 
 cd magma
@@ -32,7 +32,7 @@ cd k8s
 time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 01_compile.yml
 ```
 
-To confirm that image is uploaded, check if they are available in registery url:
+### To confirm that image is uploaded, check if they are available in registery url:
 
 Example:
 ```bash
@@ -42,21 +42,21 @@ Example:
 ```
 
 
-Deploy k8s cluster:
+### Deploy k8s cluster:
 ```bash
 time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 02_install_k8s_with_docker.yml
 ```
 
-Once k8s is installed, copy kubeconfig to your kube directory:
+### Once k8s is installed, copy kubeconfig to your kube directory:
 ```bash
 cp kubeconfig ~/.kube/config
 ```
 
-To enable autocompletion:
+### To enable autocompletion:
 ```bash
 source <(kubectl completion bash)
 ```
 
-Once k8s cluster is running, deploy magma using the follwing guide:
+### Once k8s cluster is running, [deploy magma](deploy_magma.md)
 
 [<< Back](../README.md)
