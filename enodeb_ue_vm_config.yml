@@ -27,10 +27,10 @@
       external_vlan: 2001
       external_interface: eth0
       network: 10.10.1.0
-      broadcast: 10.10.1.255
+      broadcast: 10.10.1.7
       gateway: 10.10.1.1
-      netmask: 255.255.255.0
-      netmask_len: 24
+      netmask: 255.255.255.248
+      netmask_len: 29
       dns: 8.8.8.8
       dev: "vnet0"
       alias: "net0"
@@ -44,8 +44,8 @@
         external_interface: eth0
         network: 10.10.0.0        
         broadcast: 10.10.0.255       
-        netmask: 255.255.255.0
-        netmask_len: 24
+        netmask: 255.255.255.248
+        netmask_len: 29
         dev: "vnet1"
         alias: "net1"
         slot: "0x11" 
@@ -68,10 +68,10 @@
           dev: "sda"
           unit: 1
           bus: "sata"
-      oam_ip: "10.10.1.20" 
+      oam_ip: "10.10.1.5" 
       oam_mac: "74:86:a1:c5:f9:a8"
       external_ips: 
-        - "10.10.0.20"                      
+        - "10.10.0.5"                      
       vnc: 
         port: 26111
 
@@ -86,7 +86,7 @@
           dev: "sda"
           unit: 1
           bus: "sata"
-      oam_ip: "10.10.1.21"  
+      oam_ip: "10.10.1.6"  
       oam_mac: "74:86:a1:c5:f9:ab"          
       external_ips: []
         
@@ -96,12 +96,12 @@
 
 
   enodeb:
-    uu_ip_address: 10.10.1.20
-    mme_ip_address: 10.10.0.10
+    uu_ip_address: 10.10.1.5
+    mme_ip_address: 10.10.0.4
     s1_interface: "eth1"
     s1_u_interface: "eth1"
-    s1_ip: "10.10.0.20"
-    s1_u_ip: "10.10.0.20"
+    s1_ip: "10.10.0.5"
+    s1_u_ip: "10.10.0.5"
     plmn_list:
       - mcc: 724
         mnc: 31

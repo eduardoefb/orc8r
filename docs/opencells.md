@@ -5,24 +5,14 @@ Execute the following commands to deploy the enodeb and ue virtual machines (edi
 ```bash
 cd magma
 cat enodeb_ue_vm_config.yml > libvirt-lab-ubuntu-server_18.04/config.yml
-cd libvirt-lab-ubuntu-server_18.04
+python3 opencell_hosts.py enodeb_ue_vm_config.yml > libvirt-lab-ubuntu-server_18.04/hosts
+
 ```
 
-Create the inventory file containing the IPs of enodeb and ue:
-
-```bash
-cat << EOF > hosts
-[hypervisor]
-10.2.1.31
-
-[nodes]
-10.10.1.20
-10.10.1.21
-EOF
-```
 
 Execute the playbook:
 ``` bash 
+cd libvirt-lab-ubuntu-server_18.04
 time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts create_vm.yml
 ```
 
@@ -35,26 +25,13 @@ Enter create the configuration file and inventory file for opencells nodes:
 ```bash
 cd magma
 cat enodeb_ue_vm_config.yml > opencells/config.yml
-cd opencells
-cat << EOF > hosts
-[hypervisor]
-10.2.1.31
+python3 opencell_hosts.py enodeb_ue_vm_config.yml > opencells/hosts
 
-[enodeb]
-10.10.1.20
-
-[ue]
-10.10.1.21
-
-[nodes]
-10.10.1.20
-10.10.1.21
-
-EOF
 ```
 
 Build opencells:
 ``` bash 
+cd opencells
 time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts install_opencells.yml
 ```
 
