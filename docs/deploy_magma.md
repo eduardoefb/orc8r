@@ -69,14 +69,19 @@ apt install -y gcc
 
 And execute:
 
+Edit network (adding sub_profiles - edit script if other profiles are needed)
+```bash
+bash 02_update_network.sh
+```
+
 Create the APN:
 ```bash
-bash 02_create_apn.sh
+bash 03_create_apn.sh
 ```
 
 Create the subscribers:
 ```bash 
-bash 03_subscriber.sh
+bash 04_subscriber.sh
 ```
 
 [<< Back](../README.md)
