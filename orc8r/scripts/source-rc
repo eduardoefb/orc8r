@@ -1,0 +1,26 @@
+
+# Certificates
+export CERT_DIR=""
+export CA_CERT="${CERT_DIR}rootCA.pem"
+export CERT="${CERT_DIR}admin_operator.pem"
+export KEY="${CERT_DIR}admin_operator.key.pem"
+export API_URL="api.orc8r.int"
+
+
+
+# Network
+export network_id="samplenet"
+export network_name=${network_id}
+export network_desc=${network_id}
+export network_mcc="724"
+export network_mnc="17"
+export network_tac="100"
+
+# APN:
+export apn_name="samplenet.net"
+export apn_qos="9"
+export apn_max_bandwidth_dl="100000000"
+export apn_max_bandwidth_ul="100000000"
+
+
+

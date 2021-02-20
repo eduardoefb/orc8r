@@ -104,7 +104,7 @@
     s1_u_ip: "10.10.0.5"
     plmn_list:
       - mcc: 724
-        mnc: 31
+        mnc: 17
         mnc_length: 2
     
     tracking_area_code: 100
@@ -117,7 +117,7 @@
           full_name: "Oi"
           short_name: "Oi"
           mcc: 724
-          mnc: 31
+          mnc: 17
       user:
         imei: "356113022094152"
         manufacturer: "EURECOM"
@@ -128,9 +128,9 @@
         msin: "0000000001"
         key: "00000000000000000000000000000001"
         opc: "00000000000000000000000000000001"
-        msisdn: "5521989240011"
+        msisdn: "5511989240011"
       
-      hplmn: "72431"
+      hplmn: "72417"
 
     - name: ue02  
       id: 2     
@@ -139,7 +139,7 @@
           full_name: "Oi"
           short_name: "Oi"
           mcc: 724
-          mnc: 31
+          mnc: 17
       user:
         imei: "356113022094152"
         manufacturer: "EURECOM"
@@ -150,9 +150,9 @@
         msin: "0000000002"
         key: "00000000000000000000000000000002"
         opc: "00000000000000000000000000000002"
-        msisdn: "5521989240012"
+        msisdn: "5511989240012"
       
-      hplmn: "72431"      
+      hplmn: "72417"      
 
     - name: ue03    
       id: 3    
@@ -161,7 +161,7 @@
           full_name: "Oi"
           short_name: "Oi"
           mcc: 724
-          mnc: 31
+          mnc: 17
       user:
         imei: "356113022094152"
         manufacturer: "EURECOM"
@@ -172,9 +172,9 @@
         msin: "0000000003"
         key: "00000000000000000000000000000003"
         opc: "00000000000000000000000000000003"
-        msisdn: "5521989240013"
+        msisdn: "5511989240013"
       
-      hplmn: "72431"     
+      hplmn: "72417"     
 
 
     - name: ue04 
@@ -184,7 +184,7 @@
           full_name: "Oi"
           short_name: "Oi"
           mcc: 724
-          mnc: 31
+          mnc: 17
       user:
         imei: "356113022094154"
         manufacturer: "EURECOM"
@@ -195,9 +195,9 @@
         msin: "0000000004"
         key: "00000000000000000000000000000004"
         opc: "00000000000000000000000000000004"
-        msisdn: "5521989240014"
+        msisdn: "5511989240014"
       
-      hplmn: "72431"          
+      hplmn: "72417"          
 
 
 

@@ -60,223 +60,23 @@ ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts configure_dns.yml
 
 # Create test subscribers:
 
+Install gcc:
+``` bash
+apt install -y gcc 
+```
+
+# In the scripts directory, edit the two files:  source-rc  and subscriber_list.csv
+
+And execute:
+
+Create the APN:
 ```bash
-cd /tmp/magma/
-cd certs/
+bash 02_create_apn.sh
+```
 
-
-cat << EOF > to_bin.c
-# include <stdio.h>
-# include <string.h>
-
-int main(int argc, char **argv){
-   int i, c, d;
-   char *f = argv[1];
-      
-   for(i = 0; i < strlen(f); i++){
-      if(f[i] >= 'a' && f[i] <= 'f'){
-         c = f[i] - 'a' + 10;
-      }
-      
-      else if(f[i] >= 'A' && f[i] <= 'F'){
-         c = f[i] - 'a' + 10;
-      }      
-      
-      else if(f[i] >= '0' && f[i] <= '9'){
-         c = f[i] - '0';         
-      }
-      
-      if(i % 2 == 0){
-         d = c;
-      }
-      else{
-         d = d*0x10 + c;
-         printf("%c", d);
-      }
-      
-   }
-}
-EOF
-
-yum install -y gcc
-gcc to_bin.c -o to_bin
-
-# APN:
-unalias curl
-alias curl="curl --cacert rootCA.pem  --cert admin_operator.pem --key admin_operator.key.pem"
-
-# Delete if exists:
-curl -X DELETE "https://api.orc8r.int/magma/v1/lte/oi/apns/${apn}" -H "accept: application/json"
-
-apn="orc8r.int"
-# Create:
-cat << EOF > apn.json
-{
-  "apn_configuration": {
-    "ambr": {
-      "max_bandwidth_dl": 20000000,
-      "max_bandwidth_ul": 10000000
-    },
-    "qos_profile": {
-      "class_id": 9,
-      "preemption_capability": true,
-      "preemption_vulnerability": false,
-      "priority_level": 15
-    }
-  },
-  "apn_name": "${apn}"
-}
-EOF
-
-curl -X POST "https://api.orc8r.int/magma/v1/lte/oi/apns" -H "accept: application/json" -H "content-type: application/json" -d @apn.json
-
-
-### Subscriber 1:
-key="00000000000000000000000000000001"
-opc="00000000000000000000000000000001"
-id="IMSI724310000000001"
-apn="orc8r.int"
-
-opc_encoded=`./to_bin $opc | base64` && echo $opc_encoded
-key_encoded=`./to_bin $key | base64` && echo $key_encoded
-
-cat << EOF > subscriber.json
-  {
-    "active_apns": [
-      "orc8r.int"
-    ],
-    "id": "${id}",
-    "lte": {
-      "auth_algo": "MILENAGE",
-      "auth_key": "${key_encoded}",
-      "auth_opc": "${opc_encoded}",
-      "state": "ACTIVE",
-      "sub_profile": "default"
-    }
-  }
-EOF
-
-# Delete subscriber if exists:
-curl \
-    -X DELETE "https://api.orc8r.int/magma/v1/lte/oi/subscribers/${id}" \
-    -H "accept: application/json"
-
-# Create
-curl -X POST "https://api.orc8r.int/magma/v1/lte/oi/subscribers" \
-   -H "accept: application/json" \
-   -H "content-type: application/json" \
-   -d @subscriber.json
-
-
-### Subscriber 2:
-key="00000000000000000000000000000002"
-opc="00000000000000000000000000000002"
-id="IMSI724310000000002"
-apn="orc8r.int"
-
-opc_encoded=`./to_bin $opc | base64` && echo $opc_encoded
-key_encoded=`./to_bin $key | base64` && echo $key_encoded
-
-cat << EOF > subscriber.json
-  {
-    "active_apns": [
-      "orc8r.int"
-    ],
-    "id": "${id}",
-    "lte": {
-      "auth_algo": "MILENAGE",
-      "auth_key": "${key_encoded}",
-      "auth_opc": "${opc_encoded}",
-      "state": "ACTIVE",
-      "sub_profile": "default"
-    }
-  }
-EOF
-
-# Delete subscriber if exists:
-curl \
-    -X DELETE "https://api.orc8r.int/magma/v1/lte/oi/subscribers/${id}" \
-    -H "accept: application/json"
-
-# Create
-curl -X POST "https://api.orc8r.int/magma/v1/lte/oi/subscribers" \
-   -H "accept: application/json" \
-   -H "content-type: application/json" \
-   -d @subscriber.json
-
-
-### Subscriber 3:
-key="00000000000000000000000000000003"
-opc="00000000000000000000000000000003"
-id="IMSI724310000000003"
-apn="orc8r.int"
-
-opc_encoded=`./to_bin $opc | base64` && echo $opc_encoded
-key_encoded=`./to_bin $key | base64` && echo $key_encoded
-
-cat << EOF > subscriber.json
-  {
-    "active_apns": [
-      "orc8r.int"
-    ],
-    "id": "${id}",
-    "lte": {
-      "auth_algo": "MILENAGE",
-      "auth_key": "${key_encoded}",
-      "auth_opc": "${opc_encoded}",
-      "state": "ACTIVE",
-      "sub_profile": "default"
-    }
-  }
-EOF
-
-# Delete subscriber if exists:
-curl \
-    -X DELETE "https://api.orc8r.int/magma/v1/lte/oi/subscribers/${id}" \
-    -H "accept: application/json"
-
-# Create
-curl -X POST "https://api.orc8r.int/magma/v1/lte/oi/subscribers" \
-   -H "accept: application/json" \
-   -H "content-type: application/json" \
-   -d @subscriber.json
-
-
-### Subscriber 4:
-key="00000000000000000000000000000004"
-opc="00000000000000000000000000000004"
-id="IMSI724310000000004"
-apn="orc8r.int"
-
-opc_encoded=`./to_bin $opc | base64` && echo $opc_encoded
-key_encoded=`./to_bin $key | base64` && echo $key_encoded
-
-cat << EOF > subscriber.json
-  {
-    "active_apns": [
-      "orc8r.int"
-    ],
-    "id": "${id}",
-    "lte": {
-      "auth_algo": "MILENAGE",
-      "auth_key": "${key_encoded}",
-      "auth_opc": "${opc_encoded}",
-      "state": "ACTIVE",
-      "sub_profile": "default"
-    }
-  }
-EOF
-
-# Delete subscriber if exists:
-curl \
-    -X DELETE "https://api.orc8r.int/magma/v1/lte/oi/subscribers/${id}" \
-    -H "accept: application/json"
-
-# Create
-curl -X POST "https://api.orc8r.int/magma/v1/lte/oi/subscribers" \
-   -H "accept: application/json" \
-   -H "content-type: application/json" \
-   -d @subscriber.json
+Create the subscribers:
+```bash 
+bash 03_subscriber.sh
 ```
 
 [<< Back](../README.md)
