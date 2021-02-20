@@ -1,5 +1,9 @@
 ## MAGMA orc8r/agw and Opencells enodeb/ue deployment
 
+### Topology:
+
+![image](docs/images/topology.png)
+
 <!-- TOC -->
 - [1 - Debian 9 image: Used for k8s cluster, docker register and AGW](docs/debian_9_vm.md)
 
