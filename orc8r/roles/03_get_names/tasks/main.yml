@@ -49,7 +49,7 @@
 - set_fact:
     nms={{ nmsout.stdout }}
     controller={{ controllerout.stdout }}
-    controllerint={{ controllerout.stdout }}
+    controllerint={{ controllerintout.stdout }}
     api={{ apiout.stdout }}
     bootstrapper={{ bootstrapperout.stdout }}
     fluentd={{ fluentdout.stdout }}
