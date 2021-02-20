@@ -1,0 +1,22 @@
+---
+  hosts:
+    nms:
+      ip: "{{ nms }}"
+      hostname: "*.nms.{{ magma.domain }}"
+    controller:
+      ip: "{{ controller }}"
+      hostname: "controller.{{ magma.domain }}"
+    controllerint:
+      ip: "{{ controllerint }}"
+      hostname: "controllerint.{{ magma.domain }}"
+    api:
+      ip: "{{ api }}"
+      hostname: "api.{{ magma.domain }}"
+    bootstrapper:
+      ip: "{{ bootstrapper }}"
+      hostname: "bootstrapper.{{ magma.domain }}"
+    fluentd:
+      ip: "{{ fluentd }}"
+      hostname: "fluentd.{{ magma.domain }}"
+
+
