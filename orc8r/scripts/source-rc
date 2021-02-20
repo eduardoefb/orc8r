@@ -23,4 +23,7 @@ export apn_max_bandwidth_dl="100000000"
 export apn_max_bandwidth_ul="100000000"
 
 
+# EPC
+
+
 
