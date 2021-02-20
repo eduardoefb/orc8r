@@ -2,7 +2,7 @@
 
 ### Topology:
 
-<img src="docs/images/topology.png" width="800">
+<img src="docs/images/topo.png" width="800">
 
 
 ## Steps:
