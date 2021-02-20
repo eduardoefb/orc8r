@@ -60,10 +60,12 @@
       executable: /bin/bash
 
   - name: Add register as allwed list
+    template:
+      src: daemon.json.j2
+      dest: /etc/docker/daemon.json 
+
+  - name: Restart docker
     shell: |
-      cat << EOF > /etc/docker/daemon.json 
-      { "insecure-registries":["{{ registery_url }}"] }
-      EOF
       systemctl restart docker
     args:
       warn: no

@@ -1,0 +1,20 @@
+ ---
+   hosts:
+     nms:
+       ip: 10.10.200.20
+       hostname: "*.novanetnp.net"
+     controller:
+       ip: 10.10.200.17
+       hostname: controller.novanetnp.net
+     controllerint:
+       ip: 10.108.18.65
+       hostname: controllerint.novanetnp.net
+     api:
+       ip: 10.10.200.18
+       hostname: api.novanetnp.net
+     bootstrapper:
+       ip: 10.10.200.19
+       hostname: bootstrapper.novanetnp.net
+     fluentd:
+       ip: 10.10.200.21
+       hostname: fluentd.novanetnp.net
