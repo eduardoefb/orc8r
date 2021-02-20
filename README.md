@@ -2,8 +2,10 @@
 
 ### Topology:
 
-![image](docs/images/topology.png)
+<img src="docs/images/topology.png" width="800">
 
+
+## Steps:
 <!-- TOC -->
 - [1 - Debian 9 image: Used for k8s cluster, docker register and AGW](docs/debian_9_vm.md)
 
