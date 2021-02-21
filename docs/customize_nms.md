@@ -11,16 +11,21 @@ kubectl exec -it $pod bash
 
 cd /usr/src/node_modules/@fbcnms/ui/components/auth
 
+```bash
 vi LoginForm.js
+```
 
 From:
+```bash
 <Text className={classes.title} variant="h5">
     {this.props.title}
 </Text>
+```
 
 To:
+```bash
 {window.location.href.split(".")[0].replace("https://", "").toUpperCase() + " NMS"}
-
+```
 
 
 # And also the files: 

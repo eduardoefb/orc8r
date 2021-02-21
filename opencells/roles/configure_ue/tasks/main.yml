@@ -64,3 +64,9 @@
       dest: /usr/local/bin/connect_enodeb.sh
       mode: '755' 
     
+
+  - name: Create scripts, part 3
+    template:
+      src: routes.sh.j2
+      dest: /usr/local/bin/routes.sh
+      mode: '755'     
