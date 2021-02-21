@@ -56,3 +56,15 @@ dpkg -l magma
 
 [<< Back](../README.md)
 
+
+
+## To reintegrate AGW with another orc8r:
+
+```bash
+apt purge -y magma
+rm -rfv /var/opt/magma/
+rm -rfv /etc/hagma
+apt install -y magma
+```
+
+Repeat the steps above (for integration)
