@@ -33,37 +33,3 @@ title Magma
 to:
 title NMS
 
-
-/usr/src/fbcnms-projects/magmalte/index.pug
-
-/usr/src/fbcnms-projects/magmalte/master.pug
-
-/usr/src/fbcnms-projects/magmalte/views/login.pug
-
-/usr/src/fbcnms-projects/magmalte/views/index.pug
-
-/usr/src/fbcnms-projects/magmalte/views/master.pug
-
-
-Name:
-/usr/src/fbcnms-projects/magmalte/app/login.js
-
-Example:
-
-```bash                                             
-ion LoginWrapper() {                                                                                                                                                                                  
-st history = useHistory();                                                                                                                                                                            
-urn (                                                                                                                                                                                                 
-LoginForm                                                                                                                                                                                             
- // eslint-disable-next-line no-warning-comments                                                                                                                                                      
- // $FlowFixMe - createHref exists                                                                                                                                                                    
- action={history.createHref({pathname: '/user/login'})}                                                                                                                                               
- //title="YOURNAME NMS"                                                                                                                                                                                  
- title={window.location.href.split(".")[0].replace("https://", "").toUpperCase() + " NMS"}
-                                                                                                                                                                                                      
- csrfToken={window.CONFIG.appData.csrfToken}                                                                                                                                                          
->                                                                                                                                                    ```                                                 
-       
-
-
-
