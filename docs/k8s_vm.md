@@ -42,9 +42,9 @@ Example:
 ```
 
 
-### Deploy k8s cluster:
+### Deploy k8s:
 ```bash
-time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 02_install_k8s_with_docker.yml
+time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 02_install_k8s_with_contaierd.yml
 ```
 
 ### Once k8s is installed, copy kubeconfig to your kube directory:
