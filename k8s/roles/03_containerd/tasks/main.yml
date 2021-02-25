@@ -105,5 +105,12 @@
       executable: /bin/bash
       warn: no
 
+  - name: Download k8s images
+    shell: |
+      kubeadm config images pull
+    args:
+      executable: /bin/bash
+      warn: no
+
 
     

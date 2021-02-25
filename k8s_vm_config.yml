@@ -67,7 +67,7 @@
         type: "rtl8139"   
         mtu: 1500
     
-  disk_image: "/srv/image/debian10.img"
+  disk_image: "/srv/image/debian.img"
 
   common:
     os_disk_size: "40G"
