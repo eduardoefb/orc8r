@@ -1,0 +1,108 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+
+  - name: Create the /etc/modules-load.d/containerd.conf file
+    template:
+      src: containerd.conf.j2
+      dest: /etc/modules-load.d/containerd.conf
+      owner: root
+      group: root
+      mode: "0644"
+
+
+  - name: Create the /etc/sysctl.d/99-kubernetes-cri.conf file
+    template:
+      src: 99-kubernetes-cri.conf.j2
+      dest: /etc/sysctl.d/99-kubernetes-cri.conf
+      owner: root
+      group: root
+      mode: "0644"
+
+  - name: Load modules and apply sysctl variables
+    shell: |
+      modprobe overlay
+      modprobe br_netfilter
+      sysctl --system
+    args:
+      executable: /bin/bash
+    
+
+  - name: Install required packages
+    apt:
+      name: "{{ packages }}"
+      state: latest
+    vars:
+      packages:
+        - apt-transport-https
+        - ca-certificates
+        - curl 
+        - software-properties-common
+        - nfs-kernel-server
+        - gnupg-agent
+
+  - name: Add Docker's official GPG key
+    shell: |
+      curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key --keyring /etc/apt/trusted.gpg.d/docker.gpg add -
+    args:
+      executable: /bin/bash
+      warn: no 
+
+  - name: Add Docker apt repository
+    shell: |
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    args:
+      executable: /bin/bash
+      warn: no   
+      
+  - name: Install containerd
+    shell: |
+       apt-get update && sudo apt-get install -y containerd.io
+    args:
+      executable: /bin/bash
+      warn: no  
+      
+  - name: Set default containerd configuration
+    shell: |
+       mkdir -p /etc/containerd
+       containerd config default | sudo tee /etc/containerd/config.toml
+    args:
+      executable: /bin/bash
+      warn: no         
+
+
+  - name: Restart containerd
+    shell: |
+      systemctl restart containerd
+    args:
+      warn: no
+      executable: /bin/bash
+        
+  - name: Disable swap
+    shell: |
+      swapoff -a
+      sed -i '/swap    sw/d' /etc/fstab
+    args:
+      executable: /bin/bash
+      warn: no
+
+  - name: Create kubernetes repo file
+    template:
+      src: kubernetes.list.j2
+      dest: /etc/apt/sources.list.d/kubernetes.list
+      owner: root
+      group: root
+      mode: "0644"
+
+  - name: Install kubeadm
+    shell: |
+      apt-get update
+      apt-get install -y kubelet kubeadm kubectl
+      apt-mark hold kubelet kubeadm kubectl      
+    args:
+      executable: /bin/bash
+      warn: no
+
+
+    
