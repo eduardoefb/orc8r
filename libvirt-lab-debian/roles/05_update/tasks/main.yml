@@ -5,6 +5,7 @@
   - name: Update system
     apt:
       name: '*'
+      update_cache: yes
       state: 'latest'
 
   - name: Reboot after update  
