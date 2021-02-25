@@ -22,8 +22,8 @@ sysctl --system
 # Install crio
 
 VERSION="1.20"
-#OS="Debian_10"
-OS="Debian_Unstable"
+OS="Debian_10"
+#OS="Debian_Unstable"
 
 cat <<EOF | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /
