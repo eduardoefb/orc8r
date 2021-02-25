@@ -44,7 +44,7 @@ Example:
 
 ### Deploy k8s:
 ```bash
-time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 02_install_k8s_with_contaierd.yml
+time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 02_install_k8s_with_containerd.yml
 ```
 
 ### Once k8s is installed, copy kubeconfig to your kube directory:
