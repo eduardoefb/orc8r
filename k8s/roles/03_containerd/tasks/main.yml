@@ -71,6 +71,13 @@
       executable: /bin/bash
       warn: no         
 
+  - name: Set default containerd configuration
+    template:
+      src: config.toml.j2
+      dest: /etc/containerd/config.toml
+      owner: root 
+      group: root 
+      mode: "0644"
 
   - name: Restart containerd
     shell: |
