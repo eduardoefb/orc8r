@@ -21,7 +21,7 @@
       - 10.5.0.0/27
       - 10.2.1.32/32
 
-  registery_url: "10.5.0.12:5000"
+  #registery_url: "10.5.0.12:5000"
     
   k8s:
     vip_ip: 10.5.0.4
@@ -178,6 +178,10 @@
       vnc: 
         port: 26025
       
+  
+  registery_url: "10.5.0.12:5000"
+
+
 
   magma:
     workdir: /tmp/magma
@@ -187,3 +191,7 @@
 
     dns:
       - 10.5.0.12
+
+    registry:
+      ip: "10.5.0.12"
+      host: "registry"      

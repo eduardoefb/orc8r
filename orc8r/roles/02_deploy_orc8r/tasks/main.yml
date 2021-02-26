@@ -22,7 +22,8 @@
   - name: Wait for psql
     shell: |
       kubectl delete service psql-postgresql-exposed
-      kubectl expose service psql-postgresql --type=LoadBalancer --name=psql-postgresql-exposed    
+      kubectl expose service psql-postgresql --type=LoadBalancer --name=psql-postgresql-exposed  
+      sleep 30  
       export POSTGRES_DB="orc8r"
       export POSTGRES_USER="postgres"
       export POSTGRES_PASSWORD=$(kubectl get secret --namespace default psql-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)

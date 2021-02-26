@@ -16,4 +16,5 @@ primary IN  A       {{ ansible_eth0.ipv4.address }}
 
 ;A - Record HostName To IP Address
 controllerint                IN  A    127.0.0.1
+{{ magma.registry.host }}      IN  A    {{ magma.registry.ip }}
 

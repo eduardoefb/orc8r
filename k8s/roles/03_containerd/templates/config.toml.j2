@@ -104,7 +104,7 @@ oom_score = 0
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
           endpoint = ["https://registry-1.docker.io"]
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."local.io"]
-          endpoint = ["https://{{ registery_url }}"]          
+          endpoint = ["http://{{ registery_url }}"]          
     [plugins."io.containerd.grpc.v1.cri".image_decryption]
       key_model = ""
     [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
