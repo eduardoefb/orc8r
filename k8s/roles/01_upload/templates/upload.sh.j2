@@ -18,8 +18,8 @@ docker run -d \
   registry:2
 
 
-mkdir -pv /etc/docker/certs.d/{{magma.registry.host }}.{{ domain }}/
-cp /root/certs/regca.crt /etc/docker/certs.d/{{magma.registry.host }}.{{ domain }}/regca.crt
+mkdir -pv /etc/docker/certs.d/{{magma.registry.host }}.{{ magma.domain }}/
+cp /root/certs/regca.crt /etc/docker/certs.d/{{magma.registry.host }}.{{ magma.domain }}/regca.crt
 
 #cat << EOF > /etc/docker/daemon.json 
 # { "insecure-registries":["{{ registery_url }}"] }
@@ -28,10 +28,10 @@ cp /root/certs/regca.crt /etc/docker/certs.d/{{magma.registry.host }}.{{ domain 
 systemctl restart docker
 sleep 10
 
-echo "{{magma.registry.ip }} {{magma.registry.host }}.{{ domain }}" >> /etc/hosts
+echo "{{magma.registry.ip }} {{magma.registry.host }}.{{ magma.domain }}" >> /etc/hosts
 
 for image in controller magmalte nginx; do
    img_id=`docker images | grep orc8r_${image} | awk '{print $3}'`
-   docker image tag ${img_id} {{magma.registry.host }}.{{ domain }}/${image}:1.3.0-master
-   docker image push {{magma.registry.host }}.{{ domain }}/${image}:1.3.0-master   
+   docker image tag ${img_id} {{magma.registry.host }}.{{ magma.domain }}/${image}:1.3.0-master
+   docker image push {{magma.registry.host }}.{{ magma.domain }}/${image}:1.3.0-master   
 done

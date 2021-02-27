@@ -36,7 +36,7 @@ time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 01_compile.yml
 
 Example:
 ```bash
- curl http://10.5.0.32:5000/v2/_catalog
+ curl -k https://registry.orc8r.int/v2/_catalog 
 {"repositories":["controller","magmalte","nginx"]}
 
 ```

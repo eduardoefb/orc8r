@@ -15,14 +15,12 @@
     src: docker.json.j2
     dest: /etc/docker/daemon.json 
 
-- name: Transfer files
-  copy:
-    src: "{{ playbook_dir }}/registry_certs/regca.crt"     
-    dest: /root/regca.crt
-    mode: '0644'
-    owner: root 
-    group: root
 
+- name: Delete dir 
+  file:
+    state: absent
+    path: /root/certs
+    
 - name: Create dir 
   file:
     state: directory
@@ -30,19 +28,27 @@
     owner: root
     group: root
     mode: '0644'
+
+- name: Transfer files
+  copy:
+    src: "{{ playbook_dir }}/registry_certs/regca.crt"     
+    dest: /root/certs/regca.crt
+    mode: '0644'
+    owner: root 
+    group: root    
     
 - name: Transfer key
   copy:
-    src: "{{ playbook_dir }}/registry_certs/{{magma.registry.host }}.{{ domain }}.key "     
-    dest: /root/certs/{{magma.registry.host }}.{{ domain }}.key
+    src: "{{ playbook_dir }}/registry_certs/{{magma.registry.host }}.{{ magma.domain }}.key"     
+    dest: /root/certs/{{magma.registry.host }}.{{ magma.domain }}.key
     mode: '0700'
     owner: root 
     group: root    
 
 - name: Transfer crt
   copy:
-    src: "{{ playbook_dir }}/registry_certs/{{magma.registry.host }}.{{ domain }}.crt "     
-    dest: /root/certs/{{magma.registry.host }}.{{ domain }}.crt
+    src: "{{ playbook_dir }}/registry_certs/{{magma.registry.host }}.{{ magma.domain }}.crt"     
+    dest: /root/certs/{{magma.registry.host }}.{{ magma.domain }}.crt
     mode: '0700'
     owner: root 
     group: root 

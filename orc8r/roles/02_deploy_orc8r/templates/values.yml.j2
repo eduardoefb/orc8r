@@ -7,7 +7,7 @@ replicaCount: 1
 nfs:
   ip: {{ nfs.ip }}
 
-registery_url: {{ registery_url }}
+registery_url: {{magma.registry.host }}.{{ magma.domain }}
 
 psql:
   name: postgres
