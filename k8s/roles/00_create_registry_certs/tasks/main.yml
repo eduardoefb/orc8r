@@ -1,0 +1,26 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "main.yml"
+   
+- name: Create registery certificate directory
+  file:
+    path: "{{ playbook_dir }}/registry_certs"     
+    state: directory 
+    mode: '0700'
+
+
+- name: Create the certificates
+  shell: |
+    cd {{ playbook_dir }}/registry_certs
+    openssl genrsa -out regca.key 2048
+    openssl req -x509 -new -nodes -key regca.key -sha256 -days 3650 -out regca.crt -subj "/{{ magma.certs.c }}/CN=regca.{{ domain }}"
+    openssl genrsa -out {{magma.registry.host }}.{{ domain }}.key 2048
+    openssl req -new -key {{magma.registry.host }}.{{ domain }}.key -out {{magma.registry.host }}.{{ domain }}.csr -subj "/{{ magma.certs.c }}/CN={{magma.registry.host }}.{{ domain }}"
+    openssl x509 -req -in {{magma.registry.host }}.{{ domain }}.csr -CA regca.crt -CAkey regca.key -CAcreateserial -out {{magma.registry.host }}.{{ domain }}.crt -days 8650 -sha256
+    rm regca.key
+    rm {{magma.registry.host }}.{{ domain }}.csr
+  args:
+    executable: /bin/bash
+    warn: no    
+
+

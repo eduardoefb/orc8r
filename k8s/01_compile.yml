@@ -1,3 +1,13 @@
+- hosts: localhost
+  roles:
+    - role: 00_create_registry_certs
+
+- hosts: MASTER, WORKER
+  user: debian
+  become: true 
+  roles:
+    - role: 00_transfer_register_certs_nodes
+  
 - hosts: DNS
   user: debian
   become: true 

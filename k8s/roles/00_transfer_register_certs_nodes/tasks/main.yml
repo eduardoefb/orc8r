@@ -1,0 +1,21 @@
+
+- include_vars: "{{ playbook_dir }}/config.yml"      
+- include_vars: "main.yml"
+   
+- name: Transfer files
+  copy:
+    src: "{{ playbook_dir }}/registry_certs/regca.crt"     
+    dest: /root/regca.crt
+    mode: '0644'
+    owner: root 
+    group: root
+
+- name: Add ca to trusted
+  shell: |
+    mkdir -pv /usr/local/share/ca-certificates/extra/
+    cp /root/regca.crt /usr/local/share/ca-certificates/extra/regca.crt
+    update-ca-certificates
+  args:
+    executable: /bin/bash
+    warn: no
+

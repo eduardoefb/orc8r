@@ -15,6 +15,38 @@
     src: docker.json.j2
     dest: /etc/docker/daemon.json 
 
+- name: Transfer files
+  copy:
+    src: "{{ playbook_dir }}/registry_certs/regca.crt"     
+    dest: /root/regca.crt
+    mode: '0644'
+    owner: root 
+    group: root
+
+- name: Create dir 
+  file:
+    state: directory
+    path: /root/certs
+    owner: root
+    group: root
+    mode: '0644'
+    
+- name: Transfer key
+  copy:
+    src: "{{ playbook_dir }}/registry_certs/{{magma.registry.host }}.{{ domain }}.key "     
+    dest: /root/certs/{{magma.registry.host }}.{{ domain }}.key
+    mode: '0700'
+    owner: root 
+    group: root    
+
+- name: Transfer crt
+  copy:
+    src: "{{ playbook_dir }}/registry_certs/{{magma.registry.host }}.{{ domain }}.crt "     
+    dest: /root/certs/{{magma.registry.host }}.{{ domain }}.crt
+    mode: '0700'
+    owner: root 
+    group: root 
+
 - name: Upload images
   shell: |
     bash -x /tmp/upload.sh
