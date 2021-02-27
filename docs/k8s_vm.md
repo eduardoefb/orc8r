@@ -22,7 +22,7 @@ time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts create_vm.yml
 
 ```
 
-### After vm initialization, compile, build and upload images to the registery:
+### After vm initialization, compile, build and upload images to the registry:
 
 ```bash 
 cd magma
@@ -32,7 +32,7 @@ cd k8s
 time ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts 01_compile.yml
 ```
 
-### To confirm that image is uploaded, check if they are available in registery url:
+### To confirm that image is uploaded, check if they are available in registry url:
 
 Example:
 ```bash
