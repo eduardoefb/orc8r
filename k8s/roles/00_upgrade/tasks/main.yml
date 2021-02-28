@@ -18,13 +18,13 @@
   apt:
     upgrade: dist
 
-  - name: Update system
-    apt:
-      name: '*'
-      update_cache: yes
-      state: 'latest'
+- name: Update system
+  apt:
+    name: '*'
+    update_cache: yes
+    state: 'latest'
 
-  - name: Reboot after update  
-    reboot:
-      msg: Reboot triggered
-      reboot_timeout: 360
+- name: Reboot after update  
+  reboot:
+    msg: Reboot triggered
+    reboot_timeout: 360
