@@ -1,3 +1,8 @@
+- hosts: MASTER, WORKER, REGISTERY
+  user: debian
+  become: true
+  roles: 00_upgrade
+
 - hosts: localhost
   roles:
     - role: 00_create_registry_certs
