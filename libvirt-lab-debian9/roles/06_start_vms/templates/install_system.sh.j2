@@ -1,0 +1,70 @@
+#!/bin/bash
+
+export WORK_DIR={{ hypervisor.workdir }}
+export DISK_SIZE={{ common.os_disk_size }}
+export IMAGE_URL="{{ iso_image.url }}"
+export IMAGE_FILE="/tmp/{{ iso_image.filename}}"
+export DISK_IMAGE_NAME="{{ hypervisor.workdir }}/ubuntu.img"
+
+#mkdir -pv ${WORK_DIR}
+cd ${WORK_DIR}
+
+#if [ -d "cidata" ]; the
+#   rm -rf ciddata
+#fi
+
+#if [ -f ${IMAGE_FILE} ]; then
+#   rm -f ${IMAGE_FILE}
+#fi
+
+# Download image file:
+# wget -O ${IMAGE_FILE} ${IMAGE_URL}
+
+# Umount /mnt
+umount /mnt 2>/dev/null
+
+# Mount image:
+mount ${IMAGE_FILE} /mnt
+
+# Create the user data:
+mkdir -p ~/cidata
+cd ~/cidata
+cat > user-data << 'EOF'
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu-server
+    password: "{{ pw_hash }}"
+    username: ubuntu
+  ssh:
+    install-server: yes
+    allow-pw: no
+    authorized-keys:
+{% for k in authorized_keys %}
+      - "{{ k }}"
+{% endfor %}
+  late-commands:
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0"/' /target/etc/default/grub
+    - curtin in-target --target /target update-grub2     
+EOF
+touch meta-data
+genisoimage -output ../seed.iso -volid cidata -joliet -rock user-data meta-data
+
+rm -f ${DISK_IMAGE_NAME} 2>/dev/null
+truncate -s ${DISK_SIZE} ${DISK_IMAGE_NAME}
+
+
+/usr/libexec/qemu-kvm \
+   -no-reboot -m 1024 -drive file=${DISK_IMAGE_NAME},format=raw,cache=none \
+   -kernel /mnt/casper/vmlinuz \
+   -initrd /mnt/casper/initrd  \
+   -append 'autoinstall net.ifnames=0 ipv6.disable=1 biosdevname=0' \
+   -drive file=../seed.iso,format=raw,cache=none,if=virtio \
+   -cdrom ${IMAGE_FILE} \
+   -vnc :0
+
+# Umount cdrom:
+umount /mnt
+

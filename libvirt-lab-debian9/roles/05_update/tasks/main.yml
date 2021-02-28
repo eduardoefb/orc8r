@@ -1,0 +1,14 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Update system
+    apt:
+      name: '*'
+      update_cache: yes
+      state: 'latest'
+
+  - name: Reboot after update  
+    reboot:
+      msg: Reboot triggered
+      reboot_timeout: 360

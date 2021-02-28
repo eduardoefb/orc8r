@@ -1,0 +1,6 @@
+# Update nodes:
+- hosts: nodes
+  user: ubuntu
+  become: true
+  roles:     
+    - role: 05_update

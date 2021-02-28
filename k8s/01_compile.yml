@@ -1,8 +1,3 @@
-- hosts: MASTER, WORKER, REGISTERY
-  user: debian
-  become: true
-  roles: 
-    - role: 00_upgrade
 
 - hosts: localhost
   roles:

@@ -1,0 +1,69 @@
+export WORK_DIR={{ hypervisor.workdir }}
+export DISK_SIZE={{ common.os_disk_size }}
+export DISK_IMAGE_NAME="{{ disk_image }}"
+
+# Customize image installation:
+cd ${WORK_DIR}
+\rm -f {{ node.disk[0].name }} 2>/dev/null
+cp ${DISK_IMAGE_NAME} {{ node.disk[0].name }}
+
+
+umount /mnt 2>/dev/null
+
+start=`fdisk -l {{ node.disk[0].name }} | grep -P '83\sLinux' | awk '{print $3}'`
+startb=$(($start*512))
+mount -o loop,rw,offset=${startb} {{ node.disk[0].name }} /mnt/
+
+cat << EOF > /mnt/etc/network/interfaces
+source /etc/network/interfaces.d/*
+auto lo
+iface lo inet loopback 
+EOF
+
+
+cat << EOF > /mnt/etc/network/interfaces.d/eth0 
+auto eth0 
+iface eth0 inet static 
+address {{ node.oam_ip }}
+netmask {{ network.oam.netmask }}
+gateway {{ network.oam.gateway }}
+mtu {{ network.oam.mtu }}
+EOF
+
+
+{% for n in node.external_ips %}
+cat << EOF > /mnt/etc/network/interfaces.d/eth{{ loop.index }}
+auto eth{{ loop.index }}
+iface eth{{ loop.index }} inet static 
+address {{ n }}
+netmask {{ network.external[loop.index - 1].netmask }}
+mtu {{ network.external[loop.index - 1].mtu }}
+EOF
+{% endfor %}  
+
+
+echo "nameserver {{ network.oam.dns }}" > /mnt/etc/resolv.conf
+
+cat << EOF > /mnt/etc/hosts
+127.0.0.1 localhost
+127.0.1.1 localhost
+{{ node.oam_ip }} {{ node.name }} {{ node.name }}.{{ network.domain }}
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
+
+cat << EOF > /mnt/etc/hostname
+{{ node.name }}.{{ network.domain }}
+EOF
+
+{% for k in authorized_keys %}
+echo {{ k }} >> /mnt/home/debian/.ssh/authorized_keys
+{% endfor %}
+
+# Umount
+umount /mnt

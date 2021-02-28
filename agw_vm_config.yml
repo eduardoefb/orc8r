@@ -67,101 +67,27 @@
         type: "rtl8139"   
         mtu: 1500
     
-  disk_image: "/srv/image/debian10.img"
+  disk_image: "/srv/image/debian.img"
 
   common:
     os_disk_size: "40G"
-    
-  nodes:  
-    - name: master01
+                       
+    - name: agw01
       hypervisor: "{{ hypervisor }}"
       ram: 8192000
       cpus: 4      
       disk: 
-        - name: "master01_disk0.qcow2"
+        - name: "agw01_disk0.qcow2"
           size: "40G"
           dev: "sda"
           unit: 1
           bus: "sata"
-      oam_ip: "10.5.0.5" 
-      oam_mac: "74:86:91:c5:f9:a8"
-      external_ips: []                        
+      oam_ip: "10.5.0.11"   
+      oam_mac: "74:86:91:c5:f9:ae"                                      
+      external_ips: 
+        - "10.10.0.4"
       vnc: 
-        port: 26011
-
-
-    - name: worker01
-      hypervisor: "{{ hypervisor }}"
-      ram: 8192000
-      cpus: 4      
-      disk: 
-        - name: "worker01_disk0.qcow2"
-          size: "40G"
-          dev: "sda"
-          unit: 1
-          bus: "sata"
-      oam_ip: "10.5.0.8"  
-      oam_mac: "74:86:91:c5:f9:ab"          
-      external_ips: []
-        
-      
-      vnc: 
-        port: 26021   
-
-    - name: worker02
-      hypervisor: "{{ hypervisor }}"
-      ram: 8192000
-      cpus: 4      
-      disk: 
-        - name: "worker02_disk0.qcow2"
-          size: "40G"
-          dev: "sda"
-          unit: 1
-          bus: "sata"
-      oam_ip: "10.5.0.9"   
-      oam_mac: "74:86:91:c5:f9:ac"                   
-      external_ips: []
-        
-      
-      vnc: 
-        port: 26022  
-
-    - name: worker03
-      hypervisor: "{{ hypervisor }}"
-      ram: 8192000
-      cpus: 4      
-      disk: 
-        - name: "worker03_disk0.qcow2"
-          size: "40G"
-          dev: "sda"
-          unit: 1
-          bus: "sata"
-      oam_ip: "10.5.0.10"  
-      oam_mac: "74:86:91:c5:f9:ad"                             
-      external_ips: []
-      
-      vnc: 
-        port: 26023                   
-
-    - name: nfsreg01
-      hypervisor: "{{ hypervisor }}"
-      ram: 4096000
-      cpus: 4      
-      disk: 
-        - name: "compiler_disk0.qcow2"
-          size: "40G"
-          dev: "sda"
-          unit: 1
-          bus: "sata"
-      oam_ip: "10.5.0.12"   
-      oam_mac: "74:86:91:c5:fa:ae"                                      
-      external_ips: []
-      vnc: 
-        port: 26025
-      
-  
-  registery_url: "10.5.0.12:5000"
-
+        port: 26024         
 
 
   magma:

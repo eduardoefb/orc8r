@@ -1,0 +1,107 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"
+
+  - name: Define oam network
+    community.libvirt.virt_net:
+      name: "{{ network.oam.name }}"
+      command: define
+      xml: |
+        <network>
+          <name>{{ network.oam.name }}</name>      
+          <bridge name='{{ network.oam.name }}' stp='on' delay='0' />   
+        </network>
+    
+  - name: Start oam network
+    community.libvirt.virt_net:
+      name: "{{ network.oam.name }}"
+      command: start
+    
+  - name: Create interfaces
+    shell: |
+      ip link set "{{ network.oam.external_interface }}" up
+      ip link del "{{ network.oam.external_interface }}"."{{ network.oam.external_vlan }}"
+      ip link add link "{{ network.oam.external_interface }}" "{{ network.oam.external_interface }}"."{{ network.oam.external_vlan }}" type vlan id "{{ network.oam.external_vlan }}"
+      ip link set "{{ network.oam.external_interface }}"."{{ network.oam.external_vlan }}" master "{{ network.oam.name }}"
+      ip link set "{{ network.oam.external_interface }}"."{{ network.oam.external_vlan }}" up      
+
+  - name: Define external networks
+    community.libvirt.virt_net:
+      name: "{{ item.name }}"
+      command: define
+      xml: |
+        <network>
+          <name>{{ item.name }}</name>      
+          <bridge name='{{ item.name }}' stp='on' delay='0' />   
+        </network>
+    with_items:
+      "{{ network.external }}"
+    
+  - name: Start external networks
+    community.libvirt.virt_net:
+      name: "{{ item.name }}"
+      command: start
+    with_items:
+      "{{ network.external }}"      
+    
+  - name: Create interfaces for other networks
+    shell: |
+      ip link set "{{ item.external_interface }}" up
+      ip link del "{{ item.external_interface }}"."{{ item.external_vlan }}"
+      ip link add link "{{ item.external_interface }}" "{{ item.external_interface }}"."{{ item.external_vlan }}" type vlan id "{{ item.external_vlan }}"
+      ip link set "{{ item.external_interface }}"."{{ item.external_vlan }}" master "{{ item.name }}"
+      ip link set "{{ item.external_interface }}"."{{ item.external_vlan }}" up
+    with_items:
+      "{{ network.external }}"     
+
+  - name: Destroy vm if exists
+    community.libvirt.virt:
+      command: destroy
+      name: "{{ item.name }}"
+    ignore_errors: yes
+    with_items:      
+      - "{{ nodes }}"
+
+  - name: Undefine vm if exists
+    community.libvirt.virt:
+      command: undefine
+      name: "{{ item.name }}"
+    ignore_errors: yes  
+    with_items:      
+      - "{{ nodes }}"
+
+    
+  - name: Define virtual machine without iso
+    community.libvirt.virt:
+      command: define
+      xml: "{{ lookup('template', 'virt.j2') }}"
+    vars:
+      vm_name: "{{ item.name }}"
+      ram: "{{ item.ram }}"
+      cpus: "{{ item.cpus }}"
+      dire: "{{ hypervisor.workdir }}"
+      disk: "{{ item.disk }}"
+      vnc_port: "{{ item.vnc.port }}"
+      vnc_ip: "{{ hypervisor.ip }}"
+    with_items:
+      - "{{ nodes }}"
+
+  - name: Start nodes
+    community.libvirt.virt:
+      state: running
+      name: "{{ item.name }}"
+    with_items:
+      - "{{ nodes }}"
+          
+  - name: Wait for nodes
+    wait_for:
+      host: "{{ item.oam_ip }}"
+      port: 22
+      timeout: 7200
+    with_items:
+      - "{{ nodes }}"
+
+            
+       
+
+   
