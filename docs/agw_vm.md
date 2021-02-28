@@ -1,4 +1,4 @@
-# Create the vms for k8s and register
+# Create the vms for agw
 
 ### As root user, install the pyaml and ansible:
 ```bash 

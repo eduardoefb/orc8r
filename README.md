@@ -13,7 +13,7 @@
 
 - [3 - Create the virtual machines for k8s, nfs and register ](docs/k8s_vm.md)
 
-- [4 - Create the virtual machines for k8s, nfs and register ](docs/agw_vm.md)
+- [4 - Create the virtual machines for agw ](docs/agw_vm.md)
 
 - [5 - Create the virtual machines enodeb and ue (optional) ](docs/opencells.md)
 
