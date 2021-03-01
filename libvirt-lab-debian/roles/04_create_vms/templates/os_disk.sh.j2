@@ -1,6 +1,6 @@
 export WORK_DIR={{ hypervisor.workdir }}
 export DISK_SIZE={{ common.os_disk_size }}
-export DISK_IMAGE_NAME="{{ disk_image }}"
+export DISK_IMAGE_NAME="{{ node.image }}"
 
 # Customize image installation:
 cd ${WORK_DIR}
