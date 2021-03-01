@@ -2,11 +2,11 @@
   - include_vars: "{{ playbook_dir }}/config.yml"      
   - include_vars: "main.yml"
 
-- name: Update repositories cache and install "foo" package
-  apt:
-    name: "*"
-    state: latest
-    update_cache: yes
+  - name: Update repositories cache and install "foo" package
+    apt:
+      name: "*"
+      state: latest
+      update_cache: yes
 
   - name: Create the /etc/modules-load.d/containerd.conf file
     template:
