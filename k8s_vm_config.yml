@@ -72,7 +72,7 @@
     
   nodes:  
     - name: master01
-      image: "/srv/image/debian10.img"
+      image: "/srv/image/debian.img"
       hypervisor: "{{ hypervisor }}"
       ram: 8192000
       cpus: 4      
