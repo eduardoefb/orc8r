@@ -13,11 +13,9 @@
 
 - [3 - Create the virtual machines for k8s, nfs and register ](docs/k8s_vm.md)
 
-- [4 - Create the virtual machines for agw ](docs/agw_vm.md)
+- [4 - Create the virtual machines enodeb and ue (optional) ](docs/opencells.md)
 
-- [5 - Create the virtual machines enodeb and ue (optional) ](docs/opencells.md)
+- [5 - Deploy orc8r and nms ](docs/deploy_magma.md)
 
-- [6 - Deploy orc8r and nms ](docs/deploy_magma.md)
-
-- [7 - Install agw ](docs/deploy_agw.md)
+- [6 - Install agw ](docs/deploy_agw.md)
 <!-- TOC -->

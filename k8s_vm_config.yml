@@ -67,7 +67,7 @@
         type: "rtl8139"   
         mtu: 1500
     
-  disk_image: "/srv/image/debian10.img"
+  disk_image: "/srv/image/debian.img"
 
   common:
     os_disk_size: "40G"
@@ -142,6 +142,25 @@
       
       vnc: 
         port: 26023                   
+
+
+    - name: agw01
+      hypervisor: "{{ hypervisor }}"
+      ram: 8192000
+      cpus: 4      
+      disk: 
+        - name: "agw01_disk0.qcow2"
+          size: "40G"
+          dev: "sda"
+          unit: 1
+          bus: "sata"
+      oam_ip: "10.5.0.11"   
+      oam_mac: "74:86:91:c5:f9:ae"                                      
+      external_ips: 
+        - "10.10.0.4"
+      vnc: 
+        port: 26024         
+
 
     - name: nfsreg01
       hypervisor: "{{ hypervisor }}"
