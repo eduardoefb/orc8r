@@ -77,7 +77,7 @@
 
 
     - name: ue01
-      image: "/srv/image/ubuntu.img"image: "/srv/image/ubuntu.img"
+      image: "/srv/image/ubuntu.img"
       hypervisor: "{{ hypervisor }}"
       ram: 4095000
       cpus: 4      
