@@ -90,7 +90,7 @@
 
 
     - name: worker01
-      image: "/srv/image/debian10.img"
+      image: "/srv/image/debian.img"
       hypervisor: "{{ hypervisor }}"
       ram: 8192000
       cpus: 4      
@@ -109,7 +109,7 @@
         port: 26021   
 
     - name: worker02
-      image: "/srv/image/debian10.img"
+      image: "/srv/image/debian.img"
       hypervisor: "{{ hypervisor }}"
       ram: 8192000
       cpus: 4      
@@ -128,7 +128,7 @@
         port: 26022  
 
     - name: worker03
-      image: "/srv/image/debian10.img"      
+      image: "/srv/image/debian.img"      
       hypervisor: "{{ hypervisor }}"
       ram: 8192000
       cpus: 4      
@@ -166,7 +166,7 @@
 
 
     - name: nfsreg01
-      image: "/srv/image/debian10.img"
+      image: "/srv/image/debian.img"
       hypervisor: "{{ hypervisor }}"
       ram: 4096000
       cpus: 4      
