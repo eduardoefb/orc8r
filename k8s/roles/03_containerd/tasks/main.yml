@@ -2,7 +2,7 @@
   - include_vars: "{{ playbook_dir }}/config.yml"      
   - include_vars: "main.yml"
 
-  - name: Update repositories cache and install "foo" package
+  - name: Update repositories cache and update packages
     apt:
       name: "*"
       state: latest
